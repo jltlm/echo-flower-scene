@@ -43,11 +43,35 @@ function makeFrisk() {
 
 }
 
+// translates bridge item to x, y, z. In a square of side length size
+function makeBridge(x, y, z, size) {
+    let a = size / 27;
+    let b = size / 11;
+    for (let i = 0; i < 9; i++) { // top boards, supports
+        makeRectPrism(x, y, z + (size / 9 * i), size, a, b);
+        if (i % 2) {
+            makeCylinder(x+b, y-b*2, z + (size / 9 * i), b/2, 2*b, 8, 1);
+            makeCylinder(x+size-b, y-b*2, z + (size / 9 * i), b/2, 2*b, 8, 1);
+
+            // makeCylinder(x, y, z + (size / 9 * i), b/2, b/2, 8, 1);
+        }
+    }
+    let c = size / 4 - b; // for even spacing of bottom boards
+    for (let i = 0; i < 4; i++) { // bottom boards
+        makeRectPrism(x + (size / 4 * i) + c / 4 * i, y-a, z, b, a, size);
+    }
+}
+
 // makes the water part of the scene
 function makeWater() {
     makeRectPrism(-AREADIM, -AREADIM, -AREADIM, 2*AREADIM, AREADIM/5, 2*AREADIM);
-
 }
+
+// MAKES THE SCENE
+function makeScene() {
+    makeWater();
+    makeBridge(-AREADIM, -AREADIM+AREADIM/5+0.05, 0, .5);
+};
 
 // Translates rect prism to (x, y, z)- has dimensions w (width), h (height), d (depth)
 function makeRectPrism(x, y, z, w, h, d)  {
@@ -111,12 +135,9 @@ function makeRectPrism(x, y, z, w, h, d)  {
 // the number of subdivisions along the surface of the cylinder given by
 //heightdivision.
 //
-function makeCylinder (radialdivision, heightdivision){
-    let diameter = 0.5;
-    let radius = diameter / 2;
-    let height = 0.5;
-    let heightMax = height/2;
-    let heightMin = -height/2;
+function makeCylinder (x, y, z, radius, height, radialdivision, heightdivision){
+    let heightMax = height + y;
+    let heightMin = y;
     let radialAngle = 2 * Math.PI / radialdivision;
     let divheight = height / heightdivision;
 
@@ -125,31 +146,31 @@ function makeCylinder (radialdivision, heightdivision){
         let endAngle = startAngle + radialAngle;
 
         let point1 = getRadialCoords(startAngle, radius);
-        let point1x = point1[0];
-        let point1y = point1[1];
+        let point1x = point1[0] + x;
+        let point1z = point1[1] + z;
 
         let point2 = getRadialCoords(endAngle, radius);
-        let point2x = point2[0];
-        let point2y = point2[1];
+        let point2x = point2[0] + x;
+        let point2z = point2[1] + z;
 
-        // front
-        addTriangle(point2x, point2y, heightMin,
-            point1x, point1y, heightMin,
-            0, 0, heightMin);
-        // back
-        addTriangle(0, 0, heightMax,
-            point1x, point1y, heightMax,
-            point2x, point2y, heightMax);
+        // top
+        addTriangle(point2x, heightMax, point2z, 
+            point1x, heightMax, point1z, 
+            x, heightMax, z);
+        // bottom
+        addTriangle(x, heightMin, z, 
+            point1x, heightMin, point1z,
+            point2x, heightMin,point2z);
         
         for (let j = 0; j < heightdivision; j++) {
             let divHeightStart = divheight * j + heightMin;
             let divHeightEnd = divHeightStart + divheight;
-            addTriangle(point1x, point1y, divHeightStart,
-                point2x, point2y, divHeightStart,
-                point2x, point2y, divHeightEnd);
-            addTriangle(point2x, point2y, divHeightEnd,
-                point1x, point1y, divHeightEnd,
-                point1x, point1y, divHeightStart);
+            addTriangle(point2x, divHeightEnd, point2z,
+                point2x, divHeightStart, point2z,
+                point1x, divHeightStart, point1z);
+            addTriangle(point1x, divHeightStart, point1z,
+                point1x, divHeightEnd, point1z,
+                point2x, divHeightEnd, point2z);
         }
     }
 
@@ -238,13 +259,6 @@ function makeCone (radialdivision, heightdivision) {
 function scaleToHeight(value, totalDivisions, currentDivision) {
     return value / totalDivisions * (totalDivisions - currentDivision);
 }
-
-
-// MAKES THE SCENE
-function makeScene() {
-    makeWater();
-
-};
 
 function radians(degrees)
 {
