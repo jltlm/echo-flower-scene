@@ -93,20 +93,27 @@ async function createNewShape() {
     uvs = [];
 
     // make the scene
-    // makeScene();
-    let pos = objModels.blockObj.positions.map((v) => {
-        return v/5;
-    })
-    points = points.concat(pos);
-    objModels.blockObj.indices.forEach(() => {
-        if (indices.length != 0) {
-            indices.push(indices[indices.length-1]+1);
-        } else {
-            indices.push(0);
-        }
-    });
-    uvs = uvs.concat(objModels.blockObj.uvs);
-    makeRectPrism(0,0,0,.2, .2, .2)
+
+    // // attempting to pass in an object using the object loader.
+    // // has issue: messes up vertices of later objects (offsets?)
+    // // and doesn't show up on its own
+    // let blockObj = objModels.blockObj;
+    // let pos = blockObj.positions.map((v) => {
+    //     return v/5;
+    // })
+    // points = points.concat(pos);
+    // blockObj.indices.forEach(() => {
+    //     if (indices.length != 0) {
+    //         indices.push(indices[indices.length-1]+1);
+    //     } else {
+    //         indices.push(0);
+    //     }
+    // });
+    // uvs = uvs.concat(blockObj.uvs);
+    // // makeRectPrism(0,0,0,.2, .2, .2)
+
+    makeScene();
+
 
     // create and bind vertex buffer
 
