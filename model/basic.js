@@ -221,13 +221,13 @@ function makeCone (radialdivision, heightdivision) {
             let tp1y = scaleToHeight(point1y, heightdivision, j+1);
             let tp2x = scaleToHeight(point2x, heightdivision, j+1);
             let tp2y = scaleToHeight(point2y, heightdivision, j+1);
-
-            addTriangle(bp1x, bp1y, divHeightStart,
+            
+            addQuad(
+                bp1x, bp1y, divHeightStart,
                 bp2x, bp2y, divHeightStart,
-                tp2x, tp2y, divHeightEnd);
-            addTriangle(tp2x, tp2y, divHeightEnd,
+                tp2x, tp2y, divHeightEnd,
                 tp1x, tp1y, divHeightEnd,
-                bp1x, bp1y, divHeightStart);
+            )
         }
         // tippy top
         // points closer to base
@@ -291,6 +291,7 @@ function addTriangle (x0,y0,z0, x1,y1,z1, x2,y2,z2,
 /**
  Add vertices in order of top left,
  top right, bottom left, bottom right
+ (or some rotation of that)
  */
 function addQuad (x0,y0,z0,x1,y1,z1,x2,y2,z2,x3,y3,z3) {
     addTriangle(x0,y0,z0,x1,y1,z1,x2,y2,z2,0,0,1,0,0,1);
