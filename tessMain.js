@@ -1,6 +1,6 @@
 'use strict';
 
-import * as mat4 from './mat42.js';
+import * as mat4 from './util/mat42.js';
 
 // buffers
 let myVertexBuffer = null;
