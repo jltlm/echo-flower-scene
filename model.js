@@ -1,6 +1,6 @@
 
-const AREADIM = 0.4;
-const FRISKFACEDIM = 0.4;
+const AREADIM = 0.2;
+const FRISKFACEDIM = 0.2;
 
 // sets up the bounds for the area. A cube of lines
 function makeArea() {
@@ -88,52 +88,52 @@ function makeRectPrism(x, y, z, w, h, d)  {
 
     // // NOTE: your triangles need to be clockwise for the pipeline not to cull them!
     // front 
-    addTriangle(x, y, z,
-        x, y+h, z,
-        x+w, y+h, z);
-    addTriangle(x, y, z,
+    addQuad(
+        x+w, y, z,
+        x, y, z,
         x+w, y+h, z,
-        x+w, y, z);
+        x, y+h, z,
+    );
 
     // back
-    addTriangle(x+w, y+h, d+z,
+    addQuad(
+        x, y, d+z,
+        x+w, y, d+z,
         x, y+h, d+z,
-        x, y, d+z);
-    addTriangle(x+w, y, d+z,
         x+w, y+h, d+z,
-        x, y, d+z);
+    );
 
     // top
-    addTriangle(x, y+h, z+d, 
+    addQuad(
+        x, y+h, z+d, 
         x+w, y+h, z+d, 
-        x+w, y+h, z);
-    addTriangle(x, y+h, z+d,
+        x, y+h, z,
         x+w, y+h, z,
-        x, y+h, z);
+    );
 
     // bottom
-    addTriangle(x+w, y, z,
-        x+w, y, z+d,
-        x, y, z+d);
-    addTriangle(x, y, z,
+    addQuad(
+        x+w, y, z+d, 
+        x, y, z+d, 
         x+w, y, z,
-        x, y, z+d);
+        x, y, z,
+    );
 
     // left
-    addTriangle(x, y, z+d,
-        x, y+h, z+d,
-        x, y, z);
-    addTriangle(x, y+h, z+d,
-        x, y+h, z,
-        x, y, z);
+    addQuad(
+        x+w, y+h, z,
+        x+w, y+h, z+d,
+        x+w, y, z,
+        x+w, y, z+d,
+    );
 
     // right
-    addTriangle(x+w, y, z,
-        x+w, y+h, z+d,
-        x+w, y, z+d);
-    addTriangle(x+w, y, z,
-        x+w, y+h, z,
-        x+w, y+h, z+d);
+    addQuad(
+        x, y+h, z+d,
+        x, y+h, z,
+        x, y, z+d,
+        x, y, z,
+    );
     
 }
 
@@ -344,14 +344,19 @@ function radians(degrees)
 }
 
 function addTriangle (x0,y0,z0,x1,y1,z1,x2,y2,z2) {
+    addTri(x0,y0,z0,x1,y1,z1,x2,y2,z2, 0, 0, 1, 0, 1, 1);
+    // arbitrary defaults
+}
+
+function addTri (x0,y0,z0,x1,y1,z1,x2,y2,z2, uvx0, uvy0, uvx1, uvy1, uvx2, uvy2) {
     var nverts = points.length / 3;
     
     // push first vertex
     points.push(x0);  bary.push (1.0);
     points.push(y0);  bary.push (0.0);
     points.push(z0);  bary.push (0.0);
-    uvs.push(0);
-    uvs.push(0);
+    uvs.push(uvx0);
+    uvs.push(uvy0);
     indices.push(nverts);
     nverts++;
     
@@ -359,8 +364,8 @@ function addTriangle (x0,y0,z0,x1,y1,z1,x2,y2,z2) {
     points.push(x1); bary.push (0.0);
     points.push(y1); bary.push (1.0);
     points.push(z1); bary.push (0.0);
-    uvs.push(0);
-    uvs.push(0);
+    uvs.push(uvx1);
+    uvs.push(uvy1);
     indices.push(nverts);
     nverts++
     
@@ -368,9 +373,15 @@ function addTriangle (x0,y0,z0,x1,y1,z1,x2,y2,z2) {
     points.push(x2); bary.push (0.0);
     points.push(y2); bary.push (0.0);
     points.push(z2); bary.push (1.0);
-    uvs.push(1);
-    uvs.push(1);
+    uvs.push(uvx2);
+    uvs.push(uvy2);
     indices.push(nverts);
     nverts++;
+
+}
+
+function addQuad (x0,y0,z0,x1,y1,z1,x2,y2,z2,x3,y3,z3) {
+    addTri(x0,y0,z0,x1,y1,z1,x2,y2,z2,0,0,1,0,0,1);
+    addTri(x1,y1,z1,x3,y3,z3,x2,y2,z2,1,0,1,1,0,1);
 }
 

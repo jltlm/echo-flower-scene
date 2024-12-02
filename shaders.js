@@ -8,7 +8,6 @@ function getShader () {
 
       struct UniformStruct {
           theta : vec4<f32>,
-          // scale : f32
       };
 
       @group(0) @binding(0) var<uniform> uni : UniformStruct;
@@ -31,9 +30,9 @@ function getShader () {
                           0.0, 0.0,  1.0,  0.0,
                           0.0,  0.0, 0.5,  1.0 );
         // scale matrix
-         var scale = mat4x4<f32> ( 3.0,  0.0,  0.0,  0.0,
-                          0.0,  3.0,  0.0,  0.0,
-                          0.0, 0.0,  3.0,  0.0,
+         var scale = mat4x4<f32> ( 1.0,  0.0,  0.0,  0.0,
+                          0.0,  1.0,  0.0,  0.0,
+                          0.0, 0.0,  1.0,  0.0,
                           0.0,  0.0,  0.0,  1.0 );
         // rotation matrices
         var rx = mat4x4<f32> ( 1.0,  0.0,  0.0,  0.0,
