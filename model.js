@@ -1,5 +1,6 @@
 
 const AREADIM = 0.4;
+const FRISKFACEDIM = 0.4;
 
 // sets up the bounds for the area. A cube of lines
 function makeArea() {
@@ -40,7 +41,15 @@ function makeArea() {
 
 // takes translation coords around center of object
 function makeFrisk() {
-
+    makeCylinder(0,0,0,0.08,0.1,20,1);
+    makeCylinder(0, -0.05, 0, 0.05, 0.08, 20, 1);
+    makeCylinder(0, -0.14, 0, 0.08, 0.1, 20, 1);
+    makeCylinder(0.1, -0.14, 0, 0.04, 0.1, 20, 1);
+    makeCylinder(-0.1, -0.14, 0, 0.04, 0.1, 20, 1);
+    makeCylinder(-0.025,-0.24,0, 0.04, 0.25, 20, 1);
+    makeCylinder(0.025, -0.24, 0, 0.04, 0.25, 20, 1);
+    makeRectPrism(0.02,-0.27, -0.05, 0.04, 0.04, 0.05);
+    makeRectPrism(-0.04,-0.27, -0.05, 0.04, 0.04, 0.05);
 }
 
 // translates bridge item to x, y, z. In a square of side length size
@@ -71,6 +80,7 @@ function makeWater() {
 function makeScene() {
     makeWater();
     makeBridge(-AREADIM, -AREADIM+AREADIM/5+0.05, 0, .5);
+    makeFrisk();
 };
 
 // Translates rect prism to (x, y, z)- has dimensions w (width), h (height), d (depth)
@@ -136,6 +146,73 @@ function makeRectPrism(x, y, z, w, h, d)  {
 //heightdivision.
 //
 function makeCylinder (x, y, z, radius, height, radialdivision, heightdivision){
+    // pi = Math.PI;
+    // // edited
+    // // radius
+    // for(let f = 0; f < radialdivision; f++){
+    //     let r = radius;
+    //     let a = ((2 * pi)/ radialdivision) * f;
+    //     let a2 = ((2 * pi)/ radialdivision) * (f + 1);
+
+    //     let x1 = x + (r * Math.cos(a));
+    //     let z1 = z + (r * Math.sin(a));
+    //     let x2 = x + (r * Math.cos(a2));
+    //     let z2 = z + (r * Math.sin(a2));
+    //     let m = height / heightdivision;
+        
+    //     // top face
+    //     addTriangle(x, y - (height/2), z,
+    //         x1, y - (height/2), z1,
+    //         x2, y - (height/2), z2
+    //     );
+
+    //     addTriangle(x, y - (height/2), z,
+    //         x2, y - (height/2), z2,
+    //         x1, y - (height/2), z1,
+    //     );
+
+    //     // height
+    //     for(let h = 0; h < heightdivision; h++){
+    //         let y1 = y + (m * h - (height/2));
+    //         let y2 = y + (m * (h+1) - (height/2));
+
+    //         addTriangle(x1, y1, z1,
+    //             x2, y1, z2,
+    //             x2, y2, z2
+    //         );
+
+    //         addTriangle(
+    //             x2, y1, z2,
+    //             x1, y1, z1,
+    //             x2, y2, z2
+    //         );
+
+    //         addTriangle(x2, y2, z2,
+    //             x1, y2, z1,
+    //             x1, y1, z1
+    //         );
+
+    //         addTriangle(
+    //             x1, y2, z1,
+    //             x2, y2, z2,
+    //             x1, y1, z1
+    //         );
+    //     }
+
+    //     // bottom face
+
+    //     addTriangle(x1, y + (height/2), z1,
+    //         x, y + (height/2), z,
+    //         x2, y + (height/2), z2
+    //     );
+
+    //     addTriangle(x2, y + (height/2), z2,
+    //         x, y + (height/2), z,
+    //         x1, y + (height/2), z1
+    //     );
+    // }
+
+// original
     let heightMax = height + y;
     let heightMin = y;
     let radialAngle = 2 * Math.PI / radialdivision;
@@ -157,6 +234,7 @@ function makeCylinder (x, y, z, radius, height, radialdivision, heightdivision){
         addTriangle(point2x, heightMax, point2z, 
             point1x, heightMax, point1z, 
             x, heightMax, z);
+
         // bottom
         addTriangle(x, heightMin, z, 
             point1x, heightMin, point1z,
@@ -173,7 +251,6 @@ function makeCylinder (x, y, z, radius, height, radialdivision, heightdivision){
                 point2x, divHeightEnd, point2z);
         }
     }
-
 }
 
 // helper for radial stuff (make cylinder, make cone)
