@@ -47,85 +47,10 @@ function makeRectPrism(x, y, z, w, h, d)  {
     // right
     addQuad( x, y+h, z+d, x, y+h, z,
         x, y, z+d, x, y, z, );
-    
 }
 
 
-//
-// fill in code that creates the triangles for a cylinder with diameter 0.5
-// and height of 0.5 (centered at the origin) with the number of subdivisions
-// around the base and top of the cylinder (given by radialdivision) and
-// the number of subdivisions along the surface of the cylinder given by
-//heightdivision.
-//
-function makeCylinder (x, y, z, radius, height, radialdivision, heightdivision){
-    // pi = Math.PI;
-    // // edited
-    // // radius
-    // for(let f = 0; f < radialdivision; f++){
-    //     let r = radius;
-    //     let a = ((2 * pi)/ radialdivision) * f;
-    //     let a2 = ((2 * pi)/ radialdivision) * (f + 1);
-
-    //     let x1 = x + (r * Math.cos(a));
-    //     let z1 = z + (r * Math.sin(a));
-    //     let x2 = x + (r * Math.cos(a2));
-    //     let z2 = z + (r * Math.sin(a2));
-    //     let m = height / heightdivision;
-        
-    //     // top face
-    //     addTriangle(x, y - (height/2), z,
-    //         x1, y - (height/2), z1,
-    //         x2, y - (height/2), z2
-    //     );
-
-    //     addTriangle(x, y - (height/2), z,
-    //         x2, y - (height/2), z2,
-    //         x1, y - (height/2), z1,
-    //     );
-
-    //     // height
-    //     for(let h = 0; h < heightdivision; h++){
-    //         let y1 = y + (m * h - (height/2));
-    //         let y2 = y + (m * (h+1) - (height/2));
-
-    //         addTriangle(x1, y1, z1,
-    //             x2, y1, z2,
-    //             x2, y2, z2
-    //         );
-
-    //         addTriangle(
-    //             x2, y1, z2,
-    //             x1, y1, z1,
-    //             x2, y2, z2
-    //         );
-
-    //         addTriangle(x2, y2, z2,
-    //             x1, y2, z1,
-    //             x1, y1, z1
-    //         );
-
-    //         addTriangle(
-    //             x1, y2, z1,
-    //             x2, y2, z2,
-    //             x1, y1, z1
-    //         );
-    //     }
-
-    //     // bottom face
-
-    //     addTriangle(x1, y + (height/2), z1,
-    //         x, y + (height/2), z,
-    //         x2, y + (height/2), z2
-    //     );
-
-    //     addTriangle(x2, y + (height/2), z2,
-    //         x, y + (height/2), z,
-    //         x1, y + (height/2), z1
-    //     );
-    // }
-
-// original
+function makeCylinder (x, y, z, radius, height, radialdivision=8, heightdivision=1){
     let heightMax = height + y;
     let heightMin = y;
     let radialAngle = 2 * Math.PI / radialdivision;

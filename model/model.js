@@ -5,13 +5,13 @@ const FRISKFACEDIM = 0.2;
 
 // takes translation coords around center of object
 function makeFrisk() {
-    makeCylinder(0,0,0,0.08,0.1,20,1);
-    makeCylinder(0, -0.05, 0, 0.05, 0.08, 20, 1);
-    makeCylinder(0, -0.14, 0, 0.08, 0.1, 20, 1);
-    makeCylinder(0.1, -0.14, 0, 0.04, 0.1, 20, 1);
-    makeCylinder(-0.1, -0.14, 0, 0.04, 0.1, 20, 1);
-    makeCylinder(-0.025,-0.24,0, 0.04, 0.25, 20, 1);
-    makeCylinder(0.025, -0.24, 0, 0.04, 0.25, 20, 1);
+    makeCylinder(0,0,0,0.08,0.1,12,1);
+    makeCylinder(0, -0.05, 0, 0.05, 0.08, 12);
+    makeCylinder(0, -0.14, 0, 0.08, 0.1, 12);
+    makeCylinder(0.1, -0.14, 0, 0.04, 0.1, 12);
+    makeCylinder(-0.1, -0.14, 0, 0.04, 0.1, 12);
+    makeCylinder(-0.025,-0.24,0, 0.04, 0.25, 12);
+    makeCylinder(0.025, -0.24, 0, 0.04, 0.25, 12);
     makeRectPrism(0.02,-0.27, -0.05, 0.04, 0.04, 0.05);
     makeRectPrism(-0.04,-0.27, -0.05, 0.04, 0.04, 0.05);
 }
@@ -23,8 +23,8 @@ function makeBridge(x, y, z, size) {
     for (let i = 0; i < 9; i++) { // top boards, supports
         makeRectPrism(x, y, z + (size / 9 * i), size, a, b);
         if (i % 2) {
-            makeCylinder(x+b, y-b*2, z + (size / 9 * i), b/2, 2*b, 8, 1);
-            makeCylinder(x+size-b, y-b*2, z + (size / 9 * i), b/2, 2*b, 8, 1);
+            makeCylinder(x+b, y-b*2, z + (size / 9 * i), b/2, 2*b);
+            makeCylinder(x+size-b, y-b*2, z + (size / 9 * i), b/2, 2*b);
         }
     }
     let c = size / 4 - b; // for even spacing of bottom boards
