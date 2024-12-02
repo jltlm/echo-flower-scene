@@ -1,6 +1,7 @@
 'use strict';
 
 import * as mat4 from './util/mat42.js';
+import { ObjLoader } from './util/objLoader.js';
 
 // buffers
 let myVertexBuffer = null;
@@ -17,6 +18,9 @@ var angleInc = 5.0;
 var zoomLevel = 1;
 var zoomInc = .5;
 var zoomReset = 1;
+const objModels = {}
+const objLoader = new ObjLoader();
+
 
 // set up the shader var's
 function setShaderInfo() {
@@ -89,7 +93,20 @@ async function createNewShape() {
     uvs = [];
 
     // make the scene
-    makeScene();
+    // makeScene();
+    let pos = objModels.blockObj.positions.map((v) => {
+        return v/5;
+    })
+    points = points.concat(pos);
+    objModels.blockObj.indices.forEach(() => {
+        if (indices.length != 0) {
+            indices.push(indices[indices.length-1]+1);
+        } else {
+            indices.push(0);
+        }
+    });
+    uvs = uvs.concat(objModels.blockObj.uvs);
+    makeRectPrism(0,0,0,.2, .2, .2)
 
     // create and bind vertex buffer
 
@@ -356,6 +373,9 @@ async function loadImageBitmap(url) {
 
 // Entry point to our application
 async function init() {
+    // initiate object loader, load objects
+    objModels.blockObj = objLoader.parse(await objLoader.load("./assets/obj/block.obj"));
+
     // Retrieve the canvas
     canvas = document.querySelector("canvas");
 
