@@ -77,7 +77,7 @@ async function initProgram() {
 
 // general call to make and bind a new object based on current
 // settings..Basically a call to shape specfic calls in cgIshape.js
-function createNewShape() {
+async function createNewShape() {
 
     // Call the functions in an appropriate order
     setShaderInfo();
@@ -201,6 +201,22 @@ function createNewShape() {
                 binding: 0,
                 visibility: GPUShaderStage.VERTEX,
                 buffer: {}
+            },
+            {
+                binding: 1,
+                visibility: GPUShaderStage.FRAGMENT,
+                sampler: {
+                    type: "filtering",
+                },
+            },
+            {
+                binding: 2,
+                visibility: GPUShaderStage.FRAGMENT,
+                texture: {
+                    sampleType: "float",
+                    viewDimension: "2d",
+                    multisampled: false,
+                },
             }
         ]
     });
@@ -244,6 +260,25 @@ function createNewShape() {
     // copy the values from JavaScript to the GPU
     device.queue.writeBuffer(uniformBuffer, 0, uniformValues);
 
+    // // now create the texture to render
+    const url = './assets/texture1.jpg';
+    imageSource = await loadImageBitmap(url);
+    texture = device.createTexture({
+        label: "image",
+        format: 'rgba8unorm',
+        size: [imageSource.width, imageSource.height],
+        usage: GPUTextureUsage.TEXTURE_BINDING |
+            GPUTextureUsage.COPY_DST |
+            GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+    device.queue.copyExternalImageToTexture(
+        { source: imageSource, flipY: true },
+        { texture: texture },
+        { width: imageSource.width, height: imageSource.height, depthOrArrayLayers: 1 },
+    );
+
+    const samplerTex = device.createSampler();
+    
     uniformBindGroup = device.createBindGroup({
         layout: pipeline.getBindGroupLayout(0),
         entries: [
@@ -253,6 +288,8 @@ function createNewShape() {
                     buffer: uniformBuffer,
                 },
             },
+            { binding: 1, resource: samplerTex },
+            { binding: 2, resource: texture.createView() },
         ],
     });
 
@@ -262,9 +299,6 @@ function createNewShape() {
 
 // We call draw to render to our canvas
 function draw() {
-    //console.log("inside draw");
-    //console.log("angles: " + angles[0] + " " +angles[1] + " " + angles[2]);
-
     // set up color info
     colorTexture = context.getCurrentTexture();
     colorTextureView = colorTexture.createView();
@@ -312,6 +346,13 @@ function draw() {
     device.queue.submit([commandEncoder.finish()]);
 }
 
+// function obtained from:
+// https://webgpufundamentals.org/webgpu/lessons/webgpu-importing-textures.html
+async function loadImageBitmap(url) {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return await createImageBitmap(blob, { colorSpaceConversion: 'none' });
+}
 
 // Entry point to our application
 async function init() {
@@ -358,7 +399,7 @@ async function init() {
     await initProgram();
 
     // create and bind your current object
-    createNewShape();
+    await createNewShape();
 
     // do a draw
     draw();

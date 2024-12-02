@@ -16,7 +16,7 @@ function getShader () {
       @vertex
         fn vs_main(
                   @location(0) inPos: vec3<f32>,
-                  @location(2) uv: vec3<f32>,
+                  @location(2) uv: vec2<f32>,
                   @location(1) bary : vec3<f32>
                   ) -> VertexOutput {
         var out: VertexOutput;
@@ -54,12 +54,18 @@ function getShader () {
 
         out.aVertexPosition =  trans * rz * ry * rx * scale * vec4<f32>(inPos.x, inPos.y, inPos.z, 1);
         out.bary = bary;
+        out.uv = uv;
         return out;
         }
+
+        @group(0) @binding(1) var TexSampler: sampler;
+        @group(0) @binding(2) var Texture: texture_2d<f32>;
 
         @fragment
         fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
           var fragColor = vec4<f32> (0.0, 0.5, 0.5, 1.0 );
+          fragColor = textureSample(Texture, TexSampler, in.uv);
+
             // bary
             if (in.bary.x < 0.01 || in.bary.y < 0.01 || in.bary.z < 0.01) {
               fragColor = vec4 (1.0, 1.0, 0.0, 1.0);
