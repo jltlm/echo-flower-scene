@@ -7,12 +7,12 @@ let myVertexBuffer = null;
 let myBaryBuffer = null;
 let myIndexBuffer = null;
 let myUvBuffer = null;
-let uniformBuffer = null;  
+let uniformBuffer = null;
 
 // Other globals with default values;
 var updateDisplay = true;
-var anglesReset = [ -20.0, 30.0, 0.0, 0.0];
-var angles = [ -20.0, 30.0, 0.0, 0.0];
+var anglesReset = [-20.0, 30.0, 0.0, 0.0];
+var angles = [-20.0, 30.0, 0.0, 0.0];
 var angleInc = 5.0;
 var zoomLevel = 1;
 var zoomInc = .5;
@@ -20,21 +20,21 @@ var zoomReset = 1;
 
 // set up the shader var's
 function setShaderInfo() {
-  // set up the shader code var's
-  code = getShader();
-  shaderDesc = { code: code };
-  shaderModule = device.createShaderModule(shaderDesc);
-  colorState = {
-      format: 'bgra8unorm'
-  };
+    // set up the shader code var's
+    code = getShader();
+    shaderDesc = { code: code };
+    shaderModule = device.createShaderModule(shaderDesc);
+    colorState = {
+        format: 'bgra8unorm'
+    };
 
-  // set up depth
-  // depth shading will be needed for 3d objects in the future
-  depthTexture = device.createTexture({
-      size: [canvas.width, canvas.height],
-      format: 'depth24plus',
-      usage: GPUTextureUsage.RENDER_ATTACHMENT,
-  });
+    // set up depth
+    // depth shading will be needed for 3d objects in the future
+    depthTexture = device.createTexture({
+        size: [canvas.width, canvas.height],
+        format: 'depth24plus',
+        usage: GPUTextureUsage.RENDER_ATTACHMENT,
+    });
 }
 
 // Create a program with the appropriate vertex and fragment shaders
@@ -79,46 +79,46 @@ async function initProgram() {
 // settings..Basically a call to shape specfic calls in cgIshape.js
 function createNewShape() {
 
-  // Call the functions in an appropriate order
-  setShaderInfo();
+    // Call the functions in an appropriate order
+    setShaderInfo();
 
-  // clear your points and elements
-  points = [];
-  indices = [];
-  bary = [];
-  uvs = [];
-  
-  // make the scene
-  makeScene();
+    // clear your points and elements
+    points = [];
+    indices = [];
+    bary = [];
+    uvs = [];
 
-  // create and bind vertex buffer
+    // make the scene
+    makeScene();
 
-  // set up the attribute we'll use for the vertices
-  const vertexAttribDesc = {
-      shaderLocation: 0, // @location(0) in vertex shader
-      offset: 0,
-      format: 'float32x3' // 3 floats: x,y,z
-  };
+    // create and bind vertex buffer
 
-  // this sets up our buffer layout
-  const vertexBufferLayoutDesc = {
-      attributes: [vertexAttribDesc],
-      arrayStride: Float32Array.BYTES_PER_ELEMENT * 3, // sizeof(float) * 3 floats
-      stepMode: 'vertex'
-  };
+    // set up the attribute we'll use for the vertices
+    const vertexAttribDesc = {
+        shaderLocation: 0, // @location(0) in vertex shader
+        offset: 0,
+        format: 'float32x3' // 3 floats: x,y,z
+    };
 
-  // buffer layout and filling
-  const vertexBufferDesc = {
-      size: points.length * Float32Array.BYTES_PER_ELEMENT,
-      usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
-      mappedAtCreation: true
-  };
-  myVertexBuffer = device.createBuffer(vertexBufferDesc);
-  let writeArray =
-      new Float32Array(myVertexBuffer.getMappedRange());
+    // this sets up our buffer layout
+    const vertexBufferLayoutDesc = {
+        attributes: [vertexAttribDesc],
+        arrayStride: Float32Array.BYTES_PER_ELEMENT * 3, // sizeof(float) * 3 floats
+        stepMode: 'vertex'
+    };
 
-  writeArray.set(points); // this copies the buffer
-  myVertexBuffer.unmap();
+    // buffer layout and filling
+    const vertexBufferDesc = {
+        size: points.length * Float32Array.BYTES_PER_ELEMENT,
+        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+        mappedAtCreation: true
+    };
+    myVertexBuffer = device.createBuffer(vertexBufferDesc);
+    let writeArray =
+        new Float32Array(myVertexBuffer.getMappedRange());
+
+    writeArray.set(points); // this copies the buffer
+    myVertexBuffer.unmap();
 
     // set up the uv buffer
     // set up the attribute we'll use for the vertices
@@ -148,219 +148,219 @@ function createNewShape() {
     writeArrayUvs.set(uvs); // this copies the buffer
     myUvBuffer.unmap();
 
-  // create and bind bary buffer
-  const baryAttribDesc = {
-      shaderLocation: 1, // @location(1) in vertex shader
-      offset: 0,
-      format: 'float32x3' // 3 floats: x,y,z
-  };
+    // create and bind bary buffer
+    const baryAttribDesc = {
+        shaderLocation: 1, // @location(1) in vertex shader
+        offset: 0,
+        format: 'float32x3' // 3 floats: x,y,z
+    };
 
-  // this sets up our buffer layout
-  const myBaryBufferLayoutDesc = {
-      attributes: [baryAttribDesc],
-      arrayStride: Float32Array.BYTES_PER_ELEMENT * 3, // 3 bary's
-      stepMode: 'vertex'
-  };
+    // this sets up our buffer layout
+    const myBaryBufferLayoutDesc = {
+        attributes: [baryAttribDesc],
+        arrayStride: Float32Array.BYTES_PER_ELEMENT * 3, // 3 bary's
+        stepMode: 'vertex'
+    };
 
-  // buffer layout and filling
-  const myBaryBufferDesc = {
-      size: bary.length * Float32Array.BYTES_PER_ELEMENT,
-      usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
-      mappedAtCreation: true
-  };
-  myBaryBuffer = device.createBuffer(myBaryBufferDesc);
-  let writeBaryArray =
-      new Float32Array(myBaryBuffer.getMappedRange());
+    // buffer layout and filling
+    const myBaryBufferDesc = {
+        size: bary.length * Float32Array.BYTES_PER_ELEMENT,
+        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+        mappedAtCreation: true
+    };
+    myBaryBuffer = device.createBuffer(myBaryBufferDesc);
+    let writeBaryArray =
+        new Float32Array(myBaryBuffer.getMappedRange());
 
-  writeBaryArray.set(bary); // this copies the buffer
-  myBaryBuffer.unmap();
+    writeBaryArray.set(bary); // this copies the buffer
+    myBaryBuffer.unmap();
 
-  // setup index buffer
+    // setup index buffer
 
-  // first guarantee our mapped range is a multiple of 4
-  // mainly necessary becauses uint16 is only 2 and not 4 bytes
-  if (indices.length % 2 != 0) {
-      indices.push(indices[indices.length-1]);
-  }
-  const myIndexBufferDesc = {
-      size: indices.length * Uint16Array.BYTES_PER_ELEMENT,  
-      usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST,
-      mappedAtCreation: true
-  };
-  myIndexBuffer = device.createBuffer(myIndexBufferDesc);
-  let writeIndexArray =
-      new Uint16Array(myIndexBuffer.getMappedRange());
+    // first guarantee our mapped range is a multiple of 4
+    // mainly necessary becauses uint16 is only 2 and not 4 bytes
+    if (indices.length % 2 != 0) {
+        indices.push(indices[indices.length - 1]);
+    }
+    const myIndexBufferDesc = {
+        size: indices.length * Uint16Array.BYTES_PER_ELEMENT,
+        usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST,
+        mappedAtCreation: true
+    };
+    myIndexBuffer = device.createBuffer(myIndexBufferDesc);
+    let writeIndexArray =
+        new Uint16Array(myIndexBuffer.getMappedRange());
 
-  writeIndexArray.set(indices); // this copies the buffer
-  myIndexBuffer.unmap();
+    writeIndexArray.set(indices); // this copies the buffer
+    myIndexBuffer.unmap();
 
-  // Set up the uniform var
-  let uniformBindGroupLayout = device.createBindGroupLayout({
-      entries: [
-          {
-              binding: 0,
-              visibility: GPUShaderStage.VERTEX,
-              buffer: {}
-          }
-      ]
-  });
+    // Set up the uniform var
+    let uniformBindGroupLayout = device.createBindGroupLayout({
+        entries: [
+            {
+                binding: 0,
+                visibility: GPUShaderStage.VERTEX,
+                buffer: {}
+            }
+        ]
+    });
 
-  // set up the pipeline layout
-  const pipelineLayoutDesc = { bindGroupLayouts: [uniformBindGroupLayout] };
-  const layout = device.createPipelineLayout(pipelineLayoutDesc);
+    // set up the pipeline layout
+    const pipelineLayoutDesc = { bindGroupLayouts: [uniformBindGroupLayout] };
+    const layout = device.createPipelineLayout(pipelineLayoutDesc);
 
-  // pipeline desc
-  const pipelineDesc = {
-      layout,
-      vertex: {
-          module: shaderModule,
-          entryPoint: 'vs_main',
-          buffers: [vertexBufferLayoutDesc, myBaryBufferLayoutDesc, uvBufferLayoutDesc]
-      },
-      fragment: {
-          module: shaderModule,
-          entryPoint: 'fs_main',
-          targets: [colorState]
-      },
-      depthStencil: {
-          depthWriteEnabled: true,
-          depthCompare: 'less',
-          format: 'depth24plus',
-      },
-      primitive: {
-          topology: 'triangle-list', //<- MUST change to draw lines! 
-          frontFace: 'cw', // this doesn't matter for lines
-          cullMode: 'back'
-      }
-  };
+    // pipeline desc
+    const pipelineDesc = {
+        layout,
+        vertex: {
+            module: shaderModule,
+            entryPoint: 'vs_main',
+            buffers: [vertexBufferLayoutDesc, myBaryBufferLayoutDesc, uvBufferLayoutDesc]
+        },
+        fragment: {
+            module: shaderModule,
+            entryPoint: 'fs_main',
+            targets: [colorState]
+        },
+        depthStencil: {
+            depthWriteEnabled: true,
+            depthCompare: 'less',
+            format: 'depth24plus',
+        },
+        primitive: {
+            topology: 'triangle-list', //<- MUST change to draw lines! 
+            frontFace: 'cw', // this doesn't matter for lines
+            cullMode: 'back'
+        }
+    };
 
-  pipeline = device.createRenderPipeline(pipelineDesc);
+    pipeline = device.createRenderPipeline(pipelineDesc);
 
-  uniformValues = new Float32Array(angles);
-  uniformBuffer = device.createBuffer({
-      size: uniformValues.byteLength,
-      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-  });
-  // copy the values from JavaScript to the GPU
-  device.queue.writeBuffer(uniformBuffer, 0, uniformValues);
+    uniformValues = new Float32Array(angles);
+    uniformBuffer = device.createBuffer({
+        size: uniformValues.byteLength,
+        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    });
+    // copy the values from JavaScript to the GPU
+    device.queue.writeBuffer(uniformBuffer, 0, uniformValues);
 
-  uniformBindGroup = device.createBindGroup({
-      layout: pipeline.getBindGroupLayout(0),
-      entries: [
-          {
-              binding: 0,
-              resource: {
-                  buffer: uniformBuffer,
-              },
-          },
-      ],
-  });
+    uniformBindGroup = device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(0),
+        entries: [
+            {
+                binding: 0,
+                resource: {
+                    buffer: uniformBuffer,
+                },
+            },
+        ],
+    });
 
-  // indicate a redraw is required.
-  updateDisplay = true;
+    // indicate a redraw is required.
+    updateDisplay = true;
 }
 
 // We call draw to render to our canvas
 function draw() {
-  //console.log("inside draw");
-  //console.log("angles: " + angles[0] + " " +angles[1] + " " + angles[2]);
+    //console.log("inside draw");
+    //console.log("angles: " + angles[0] + " " +angles[1] + " " + angles[2]);
 
-  // set up color info
-  colorTexture = context.getCurrentTexture();
-  colorTextureView = colorTexture.createView();
+    // set up color info
+    colorTexture = context.getCurrentTexture();
+    colorTextureView = colorTexture.createView();
 
-  // a color attachment ia like a buffer to hold color info
-  colorAttachment = {
-      view: colorTextureView,
-      clearValue: { r: 0.2, g: 0.2, b: 0.0, a: 1 },
-      loadOp: 'clear',
-      storeOp: 'store'
-  };
-  renderPassDesc = {
-      colorAttachments: [colorAttachment],
-      depthStencilAttachment: {
-          view: depthTexture.createView(),
+    // a color attachment ia like a buffer to hold color info
+    colorAttachment = {
+        view: colorTextureView,
+        clearValue: { r: 0.2, g: 0.2, b: 0.0, a: 1 },
+        loadOp: 'clear',
+        storeOp: 'store'
+    };
+    renderPassDesc = {
+        colorAttachments: [colorAttachment],
+        depthStencilAttachment: {
+            view: depthTexture.createView(),
 
-          depthClearValue: 1.0,
-          depthLoadOp: 'clear',
-          depthStoreOp: 'store',
-      },
-  };
+            depthClearValue: 1.0,
+            depthLoadOp: 'clear',
+            depthStoreOp: 'store',
+        },
+    };
 
-  // convert to radians before sending to shader
-  uniformValues[0] = radians(angles[0]);
-  uniformValues[1] = radians(angles[1]);
-  uniformValues[2] = radians(angles[2]);
+    // convert to radians before sending to shader
+    uniformValues[0] = radians(angles[0]);
+    uniformValues[1] = radians(angles[1]);
+    uniformValues[2] = radians(angles[2]);
 
-  // copy the values from JavaScript to the GPU
-  device.queue.writeBuffer(uniformBuffer, 0, uniformValues);
+    // copy the values from JavaScript to the GPU
+    device.queue.writeBuffer(uniformBuffer, 0, uniformValues);
 
-  // create the render pass
-  commandEncoder = device.createCommandEncoder();
-  passEncoder = commandEncoder.beginRenderPass(renderPassDesc);
-  passEncoder.setViewport(0, 0,canvas.width, canvas.height, 0, 1);
-  passEncoder.setPipeline(pipeline);
-  passEncoder.setBindGroup(0, uniformBindGroup);
-  passEncoder.setVertexBuffer(0, myVertexBuffer);
-  passEncoder.setVertexBuffer(1, myBaryBuffer);
-  passEncoder.setVertexBuffer(2, myUvBuffer);
-  passEncoder.setIndexBuffer(myIndexBuffer, "uint16");
-  passEncoder.drawIndexed(indices.length, 1);
-  passEncoder.end();
+    // create the render pass
+    commandEncoder = device.createCommandEncoder();
+    passEncoder = commandEncoder.beginRenderPass(renderPassDesc);
+    passEncoder.setViewport(0, 0, canvas.width, canvas.height, 0, 1);
+    passEncoder.setPipeline(pipeline);
+    passEncoder.setBindGroup(0, uniformBindGroup);
+    passEncoder.setVertexBuffer(0, myVertexBuffer);
+    passEncoder.setVertexBuffer(1, myBaryBuffer);
+    passEncoder.setVertexBuffer(2, myUvBuffer);
+    passEncoder.setIndexBuffer(myIndexBuffer, "uint16");
+    passEncoder.drawIndexed(indices.length, 1);
+    passEncoder.end();
 
-  // submit the pass to the device
-  device.queue.submit([commandEncoder.finish()]);
+    // submit the pass to the device
+    device.queue.submit([commandEncoder.finish()]);
 }
 
 
 // Entry point to our application
 async function init() {
-  // Retrieve the canvas
-  canvas = document.querySelector("canvas");
+    // Retrieve the canvas
+    canvas = document.querySelector("canvas");
 
-  // deal with keypress
-  window.addEventListener('keydown', (event) => {
-  
-    var key = event.key;
+    // deal with keypress
+    window.addEventListener('keydown', (event) => {
 
-    //  incremental rotation
-    if (key == 'x')
-        angles[0] -= angleInc;
-    else if (key == 'y')
-        angles[1] -= angleInc;
-    else if (key == 'z')
-        angles[2] -= angleInc;
-    else if (key == 'X')
-        angles[0] += angleInc;
-    else if (key == 'Y')
-        angles[1] += angleInc;
-    else if (key == 'Z')
-        angles[2] += angleInc;
-    else if (key == '+')
-        zoomLevel += zoomInc;
-    else if (key == '-')
-        zoomLevel -= zoomInc;
+        var key = event.key;
 
-    // reset
-    else if (key == 'r' || key == 'R') {
-        angles[0] = anglesReset[0];
-        angles[1] = anglesReset[1];
-        angles[2] = anglesReset[2];
-        zoomLevel = zoomReset;
-    }
+        //  incremental rotation
+        if (key == 'x')
+            angles[0] -= angleInc;
+        else if (key == 'y')
+            angles[1] -= angleInc;
+        else if (key == 'z')
+            angles[2] -= angleInc;
+        else if (key == 'X')
+            angles[0] += angleInc;
+        else if (key == 'Y')
+            angles[1] += angleInc;
+        else if (key == 'Z')
+            angles[2] += angleInc;
+        else if (key == '+')
+            zoomLevel += zoomInc;
+        else if (key == '-')
+            zoomLevel -= zoomInc;
 
-    // create a new shape and do a redo a draw
+        // reset
+        else if (key == 'r' || key == 'R') {
+            angles[0] = anglesReset[0];
+            angles[1] = anglesReset[1];
+            angles[2] = anglesReset[2];
+            zoomLevel = zoomReset;
+        }
+
+        // create a new shape and do a redo a draw
+        createNewShape();
+        draw();
+    }, false);
+
+    // Read, compile, and link your shaders
+    await initProgram();
+
+    // create and bind your current object
     createNewShape();
+
+    // do a draw
     draw();
-}, false);
-
-  // Read, compile, and link your shaders
-  await initProgram();
-
-  // create and bind your current object
-  createNewShape();
-
-  // do a draw
-  draw();
 }
 window.onload = init;

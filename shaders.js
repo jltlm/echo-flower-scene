@@ -3,6 +3,7 @@ function getShader () {
   struct VertexOutput {
                   @builtin(position) aVertexPosition: vec4<f32>,
                   @location(0) bary: vec3<f32>,
+                  @location(1) uv: vec2<f32>
       };
 
       struct UniformStruct {
