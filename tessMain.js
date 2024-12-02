@@ -1,51 +1,27 @@
 'use strict';
 
-// Global variables that are set and used
-// across the application
-let verticesSize,
-  vertices,
-  adapter,
-  context,
-  colorAttachment,
-  colorTextureView,
-  colorTexture,
-  depthTexture,
-  code,
-  computeCode,
-  shaderDesc,
-  colorState,
-  shaderModule,
-  pipeline,
-  renderPassDesc,
-  commandEncoder,
-  passEncoder,
-  device,
-  drawingTop,
-  drawingLeft,
-  canvas,
-  bary,
-  points,
-  uniformValues,
-  uniformBindGroup,
-  indices;
+import * as mat4 from './mat42.js';
 
 // buffers
 let myVertexBuffer = null;
 let myBaryBuffer = null;
 let myIndexBuffer = null;
-let uniformBuffer;  
+let myUvBuffer = null;
+let uniformBuffer = null;  
 
 // Other globals with default values;
 var updateDisplay = true;
 var anglesReset = [ -20.0, 30.0, 0.0, 0.0];
 var angles = [ -20.0, 30.0, 0.0, 0.0];
 var angleInc = 5.0;
-
+var zoomLevel = 1;
+var zoomInc = .5;
+var zoomReset = 1;
 
 // set up the shader var's
 function setShaderInfo() {
   // set up the shader code var's
-  code = document.getElementById('shader').innerText;
+  code = getShader();
   shaderDesc = { code: code };
   shaderModule = device.createShaderModule(shaderDesc);
   colorState = {
@@ -103,7 +79,6 @@ async function initProgram() {
 // settings..Basically a call to shape specfic calls in cgIshape.js
 function createNewShape() {
 
-//   console.log("inside create new shape: " + curShape);
   // Call the functions in an appropriate order
   setShaderInfo();
 
@@ -111,6 +86,7 @@ function createNewShape() {
   points = [];
   indices = [];
   bary = [];
+  uvs = [];
   
   // make the scene
   makeScene();
@@ -143,6 +119,34 @@ function createNewShape() {
 
   writeArray.set(points); // this copies the buffer
   myVertexBuffer.unmap();
+
+    // set up the uv buffer
+    // set up the attribute we'll use for the vertices
+    const uvAttribDesc = {
+        shaderLocation: 2, // @location(2) in vertex shader
+        offset: 0,
+        format: 'float32x2' // 2 floats: u,v
+    };
+
+    // this sets up our buffer layout
+    const uvBufferLayoutDesc = {
+        attributes: [uvAttribDesc],
+        arrayStride: Float32Array.BYTES_PER_ELEMENT * 2, // sizeof(float) * 2 floats
+        stepMode: 'vertex'
+    };
+
+    // buffer layout and filling
+    const uvBufferDesc = {
+        size: uvs.length * Float32Array.BYTES_PER_ELEMENT,
+        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+        mappedAtCreation: true
+    };
+    myUvBuffer = device.createBuffer(uvBufferDesc);
+    let writeArrayUvs =
+        new Float32Array(myUvBuffer.getMappedRange());
+
+    writeArrayUvs.set(uvs); // this copies the buffer
+    myUvBuffer.unmap();
 
   // create and bind bary buffer
   const baryAttribDesc = {
@@ -211,7 +215,7 @@ function createNewShape() {
       vertex: {
           module: shaderModule,
           entryPoint: 'vs_main',
-          buffers: [vertexBufferLayoutDesc, myBaryBufferLayoutDesc]
+          buffers: [vertexBufferLayoutDesc, myBaryBufferLayoutDesc, uvBufferLayoutDesc]
       },
       fragment: {
           module: shaderModule,
@@ -268,7 +272,7 @@ function draw() {
   // a color attachment ia like a buffer to hold color info
   colorAttachment = {
       view: colorTextureView,
-      clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1 },
+      clearValue: { r: 0.2, g: 0.2, b: 0.0, a: 1 },
       loadOp: 'clear',
       storeOp: 'store'
   };
@@ -299,6 +303,7 @@ function draw() {
   passEncoder.setBindGroup(0, uniformBindGroup);
   passEncoder.setVertexBuffer(0, myVertexBuffer);
   passEncoder.setVertexBuffer(1, myBaryBuffer);
+  passEncoder.setVertexBuffer(2, myUvBuffer);
   passEncoder.setIndexBuffer(myIndexBuffer, "uint16");
   passEncoder.drawIndexed(indices.length, 1);
   passEncoder.end();
@@ -314,7 +319,40 @@ async function init() {
   canvas = document.querySelector("canvas");
 
   // deal with keypress
-  window.addEventListener('keydown', gotKey, false);
+  window.addEventListener('keydown', (event) => {
+  
+    var key = event.key;
+
+    //  incremental rotation
+    if (key == 'x')
+        angles[0] -= angleInc;
+    else if (key == 'y')
+        angles[1] -= angleInc;
+    else if (key == 'z')
+        angles[2] -= angleInc;
+    else if (key == 'X')
+        angles[0] += angleInc;
+    else if (key == 'Y')
+        angles[1] += angleInc;
+    else if (key == 'Z')
+        angles[2] += angleInc;
+    else if (key == '+')
+        zoomLevel += zoomInc;
+    else if (key == '-')
+        zoomLevel -= zoomInc;
+
+    // reset
+    else if (key == 'r' || key == 'R') {
+        angles[0] = anglesReset[0];
+        angles[1] = anglesReset[1];
+        angles[2] = anglesReset[2];
+        zoomLevel = zoomReset;
+    }
+
+    // create a new shape and do a redo a draw
+    createNewShape();
+    draw();
+}, false);
 
   // Read, compile, and link your shaders
   await initProgram();
@@ -325,3 +363,4 @@ async function init() {
   // do a draw
   draw();
 }
+window.onload = init;
