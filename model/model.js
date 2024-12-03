@@ -38,11 +38,12 @@ function makeWater() {
     makeRectPrism(-AREADIM, -AREADIM, -AREADIM, 2*AREADIM, AREADIM/5, 2*AREADIM);
 }
 
+
 // MAKES THE SCENE
 function makeScene() {
     makeWater();
-    makeBridge(-AREADIM, -AREADIM+AREADIM/5+0.05, 0, AREADIM);
-    makeFrisk();
+    // makeBridge(-AREADIM, -AREADIM+AREADIM/5+0.05, 0, AREADIM);
+    // makeFrisk();
 };
 
 // // sets up the bounds for the area. A cube of lines, would require point line list thing

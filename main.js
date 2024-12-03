@@ -284,9 +284,13 @@ async function createNewShape() {
     // copy the values from JavaScript to the GPU
     device.queue.writeBuffer(uniformBuffer, 0, uniformValues);
 
-    // // now create the texture to render
-    const url = './assets/texture1.jpg';
-    imageSource = await loadImageBitmap(url);
+    // // now create the textures to render
+    const waterURL = './assets/water.jpg';
+    const skinURL = './assets/friskskin.jpg';
+    const shirtURL = './assets/friskskinbase.jpg';
+    const pantsURL = './assets/friskpants.jpg';
+    const shoeURL = './assets/friskshoes.jpg';
+    imageSource = await loadImageBitmap(waterURL);
     texture = device.createTexture({
         label: "image",
         format: 'rgba8unorm',
@@ -330,7 +334,7 @@ function draw() {
     // a color attachment ia like a buffer to hold color info
     colorAttachment = {
         view: colorTextureView,
-        clearValue: { r: 0.2, g: 0.2, b: 0.0, a: 1 },
+        clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1 },
         loadOp: 'clear',
         storeOp: 'store'
     };

@@ -67,7 +67,7 @@ function getShader () {
 
             // bary
             if (in.bary.x < 0.01 || in.bary.y < 0.01 || in.bary.z < 0.01) {
-              fragColor = vec4 (1.0, 1.0, 0.0, 1.0);
+              fragColor = vec4 (0.05, 0.28, 0.42, 1.0);
         }
         return fragColor;
         }
