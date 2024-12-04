@@ -78,7 +78,6 @@ export class ObjLoader {
           // If we already saw this, add to indices list.
           if (cache[faceString] !== undefined) {
             finalIndices.push(cache[faceString])
-            continue
           }
 
           cache[faceString] = i

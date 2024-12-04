@@ -2,6 +2,9 @@
 
 import * as mat4 from './util/mat42.js';
 import { ObjLoader } from './util/objLoader.js';
+import { makeCylinder, radians } from './model/basic.js';
+import { makeScene } from './model/model.js';
+import { makeRectPrism } from './model/basic.js';
 
 // buffers
 let myVertexBuffer = null;
@@ -94,26 +97,32 @@ async function createNewShape() {
 
     // make the scene
 
-    // // attempting to pass in an object using the object loader.
-    // // has issue: messes up vertices of later objects (offsets?)
-    // // and doesn't show up on its own
-    // let blockObj = objModels.blockObj;
-    // let pos = blockObj.positions.map((v) => {
-    //     return v/5;
-    // })
-    // points = points.concat(pos);
-    // blockObj.indices.forEach(() => {
-    //     if (indices.length != 0) {
-    //         indices.push(indices[indices.length-1]+1);
-    //     } else {
-    //         indices.push(0);
-    //     }
-    // });
-    // uvs = uvs.concat(blockObj.uvs);
-    // // makeRectPrism(0,0,0,.2, .2, .2)
-
+    // attempting to pass in an object using the object loader.
+    // has issue: messes up vertices of later objects (offsets?)
+    // and doesn't show up on its own
+    let blockObj = objModels.blockObj;
+    points.push(...blockObj.positions.map((v) => {return v*.2+0.1;}));
+    blockObj.indices.forEach((v, i) => {
+        indices.length != 0 ?
+            indices.push(indices[indices.length-1]+1) :
+            indices.push(0);
+        if (i%3 == 0) {
+            bary.push (0.0);
+            bary.push (0.0);
+            bary.push (1.0);
+        } else if (i%3 == 1) {
+            bary.push (0.0);
+            bary.push (1.0);
+            bary.push (0.0);
+        } else if (i%3 == 2) {
+            bary.push (1.0);
+            bary.push (0.0);
+            bary.push (0.0);
+        }
+    });
+    uvs.push(...blockObj.uvs)
     makeScene();
-
+    
 
     // create and bind vertex buffer
 
@@ -285,6 +294,9 @@ async function createNewShape() {
     device.queue.writeBuffer(uniformBuffer, 0, uniformValues);
 
     // // now create the textures to render
+    // // now create the texture to render
+    const url = './assets/texture1.jpg';
+    // imageSource = await loadImageBitmap(url);
     const waterURL = './assets/water.jpg';
     const skinURL = './assets/friskskin.jpg';
     const shirtURL = './assets/friskskinbase.jpg';
@@ -334,7 +346,7 @@ function draw() {
     // a color attachment ia like a buffer to hold color info
     colorAttachment = {
         view: colorTextureView,
-        clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1 },
+        clearValue: { r: 0.3, g: 0.1, b: 0.3, a: 1 },
         loadOp: 'clear',
         storeOp: 'store'
     };
