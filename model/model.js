@@ -4,16 +4,16 @@ const FRISKFACEDIM = 0.2;
 
 
 // takes translation coords around center of object
-function makeFrisk() {
-    makeCylinder(0,0,0,0.08,0.1,12,1);
-    makeCylinder(0, -0.05, 0, 0.05, 0.08, 12);
-    makeCylinder(0, -0.14, 0, 0.08, 0.1, 12);
-    makeCylinder(0.1, -0.14, 0, 0.04, 0.1, 12);
-    makeCylinder(-0.1, -0.14, 0, 0.04, 0.1, 12);
-    makeCylinder(-0.025,-0.24,0, 0.04, 0.25, 12);
-    makeCylinder(0.025, -0.24, 0, 0.04, 0.25, 12);
-    makeRectPrism(0.02,-0.27, -0.05, 0.04, 0.04, 0.05);
-    makeRectPrism(-0.04,-0.27, -0.05, 0.04, 0.04, 0.05);
+function makeFrisk(x,y,z) {
+    makeCylinder(x, y, z, 0.08,0.1,12,1);
+    makeCylinder(x, y-0.05, z, 0.05, 0.08, 12);
+    makeCylinder(x, y-0.14, z, 0.08, 0.1, 12);
+    makeCylinder(x + 0.1, y-0.14, z, 0.04, 0.1, 12);
+    makeCylinder(x - 0.1, y-0.14, z, 0.04, 0.1, 12);
+    makeCylinder(x - 0.025,y-0.24,z, 0.04, 0.25, 12);
+    makeCylinder(x + 0.025, y-0.24, z, 0.04, 0.25, 12);
+    makeRectPrism(x + 0.02,y-0.27, z-0.05, 0.04, 0.04, 0.05);
+    makeRectPrism(x-0.04,y-0.27, z-0.05, 0.04, 0.04, 0.05);
 }
 
 // translates bridge item to x, y, z. In a square of side length size
@@ -35,15 +35,15 @@ function makeBridge(x, y, z, size) {
 
 // makes the water part of the scene
 function makeWater() {
-    makeRectPrism(-AREADIM, -AREADIM, -AREADIM, 2*AREADIM, AREADIM/5, 2*AREADIM);
+    makeRectPrism(-AREADIM, -AREADIM, -AREADIM+0.2, 2*AREADIM, AREADIM/5, 2*AREADIM);
 }
 
 
 // MAKES THE SCENE
 function makeScene() {
     makeWater();
-    // makeBridge(-AREADIM, -AREADIM+AREADIM/5+0.05, 0, AREADIM);
-    // makeFrisk();
+    makeBridge(-AREADIM, -AREADIM+AREADIM/5+0.05, 0, AREADIM);
+    makeFrisk(0, 0, 0);
 };
 
 // // sets up the bounds for the area. A cube of lines, would require point line list thing
