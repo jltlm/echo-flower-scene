@@ -21,7 +21,7 @@ var angleInc = 5.0;
 var zoomLevel = 1;
 var zoomInc = .5;
 var zoomReset = 1;
-const objModels = {}
+objModels = {}
 const objLoader = new ObjLoader();
 
 
@@ -97,30 +97,6 @@ async function createNewShape() {
 
     // make the scene
 
-    // attempting to pass in an object using the object loader.
-    // has issue: messes up vertices of later objects (offsets?)
-    // and doesn't show up on its own
-    let blockObj = objModels.blockObj;
-    points.push(...blockObj.positions.map((v) => {return v*.2+0.1;}));
-    blockObj.indices.forEach((v, i) => {
-        indices.length != 0 ?
-            indices.push(indices[indices.length-1]+1) :
-            indices.push(0);
-        if (i%3 == 0) {
-            bary.push (0.0);
-            bary.push (0.0);
-            bary.push (1.0);
-        } else if (i%3 == 1) {
-            bary.push (0.0);
-            bary.push (1.0);
-            bary.push (0.0);
-        } else if (i%3 == 2) {
-            bary.push (1.0);
-            bary.push (0.0);
-            bary.push (0.0);
-        }
-    });
-    uvs.push(...blockObj.uvs)
     makeScene();
     
 
@@ -296,13 +272,13 @@ async function createNewShape() {
     // // now create the textures to render
     // // now create the texture to render
     const url = './assets/texture1.jpg';
-    // imageSource = await loadImageBitmap(url);
+    imageSource = await loadImageBitmap(url);
     const waterURL = './assets/water.jpg';
     const skinURL = './assets/friskskin.jpg';
     const shirtURL = './assets/friskskinbase.jpg';
     const pantsURL = './assets/friskpants.jpg';
     const shoeURL = './assets/friskshoes.jpg';
-    imageSource = await loadImageBitmap(waterURL);
+    // imageSource = await loadImageBitmap(waterURL);
     texture = device.createTexture({
         label: "image",
         format: 'rgba8unorm',
@@ -398,6 +374,7 @@ async function loadImageBitmap(url) {
 async function init() {
     // initiate object loader, load objects
     objModels.blockObj = objLoader.parse(await objLoader.load("./assets/obj/block.obj"));
+    objModels.friskObj = objLoader.parse(await objLoader.load("./assets/obj/frisk.obj"));
 
     // Retrieve the canvas
     canvas = document.querySelector("canvas");

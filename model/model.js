@@ -1,3 +1,5 @@
+import { makeRectPrism, makeCylinder, addObj } from "./basic.js";
+
 // models size constants
 const AREADIM = 0.2;
 const FRISKFACEDIM = 0.2;
@@ -38,12 +40,78 @@ function makeWater() {
     makeRectPrism(-AREADIM, -AREADIM, -AREADIM+0.2, 2*AREADIM, AREADIM/5, 2*AREADIM);
 }
 
+// procedural generation
+// (getting there)
+/**
+
+axiom: a
+variables:
+- a: line
+- b: line ending in leaf
+- c: line ending in flower
+constants:
+- [ push the position and angle state and turn left 45 degrees
+- ] push the position and angle state and turn right 45 degrees
+rules:
+a -> aa
+b -> a[b]
+c -> [c
+ */
+function makeFlower(x, y, z, height, iterations) {
+    let rule = new Map();
+    rule.set('a', 'ab');
+    rule.set('b', 'a');
+
+    let genString = "a";
+
+    for (let i = 1; i < iterations; i++) {
+        let newString = "";
+        for (let j = 0; j < genString.length; j++) {
+            let insert = rule.get(genString.charAt(j).toString());
+            // add the substitution into new string
+            newString += insert;
+        }
+        // reassign genString to newString
+        genString = newString;
+    }
+
+    let itemHeight = height / genString.length;
+
+
+    function addStem(startY) {
+        // stem is 1/10th width to height
+        makeCylinder(x, startY, z, itemHeight/10, itemHeight);
+    }
+    function addLeaf(startY) {
+        addStem(startY);
+        makeRectPrism(x+itemHeight/10, startY, z, itemHeight, itemHeight/2, itemHeight);
+    }
+    function addFlower(startY) {
+        
+    }
+
+    for (let i = 0; i < genString.length; i++) {
+        let ch = genString.charAt(i);
+        if (ch == 'a') {
+            addStem(i * itemHeight);
+        } else if (ch == 'b') {
+            addLeaf(i * itemHeight);
+        }
+    }
+
+}
+
+function frisk() {
+    addObj(objModels.friskObj, 0, -.1, 0, 0.05)
+}
 
 // MAKES THE SCENE
-function makeScene() {
+export function makeScene() {
     makeWater();
     makeBridge(-AREADIM, -AREADIM+AREADIM/5+0.05, 0, AREADIM);
-    makeFrisk(0, 0, 0);
+    // makeFrisk(0, 0, 0);
+    frisk()
+    makeFlower(0,0,0,.3, 5)
 };
 
 // // sets up the bounds for the area. A cube of lines, would require point line list thing
@@ -83,3 +151,4 @@ function makeScene() {
 //     ];
 
 // }
+
