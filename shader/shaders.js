@@ -8,7 +8,8 @@ function getShader () {
 
       struct ViewTransforms {
           theta : vec4<f32>,
-          scale: vec4<f32>
+          scale: vec4<f32>,
+          translation: vec4<f32>,
       };
 
       @group(0) @binding(0) var<uniform> uni : ViewTransforms;
@@ -51,8 +52,10 @@ function getShader () {
                           0.0,  0.0,  1.0,  0.0,
                           0.0,  0.0,  0.0,  1.0 );
 
-
-        out.aVertexPosition =  trans * rz * ry * rx * scale * vec4<f32>(inPos.x, inPos.y, inPos.z, 1);
+        out.aVertexPosition =  trans * rz * ry * rx * scale *
+          vec4<f32>(inPos.x + uni.translation.x,
+            inPos.y + uni.translation.y,
+            inPos.z + uni.translation.z, 1);
         out.bary = bary;
         out.uv = uv;
         return out;

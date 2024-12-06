@@ -21,6 +21,9 @@ var angleInc = 5.0;
 var zoomLevel = 2;
 var zoomInc = .1;
 var zoomReset = 2;
+var translateReset = [0, 0, 0, 0];
+var translate = [0, 0, 0, 0];
+var translateInc = 0.02;
 objModels = {}
 const objLoader = new ObjLoader();
 
@@ -261,7 +264,9 @@ async function createNewShape() {
 
     pipeline = device.createRenderPipeline(pipelineDesc);
 
-    uniformValues = new Float32Array(angles.concat([zoomLevel, zoomLevel, zoomLevel, 0]));
+    uniformValues = new Float32Array(angles
+        .concat([zoomLevel, zoomLevel, zoomLevel, 0])
+        .concat(translate));
     uniformBuffer = device.createBuffer({
         size: uniformValues.byteLength,
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
@@ -401,6 +406,18 @@ async function init() {
             zoomLevel += zoomInc;
         else if (key == '-')
             zoomLevel -= zoomInc;
+        else if (key == 'a')
+            translate[0] -= translateInc;
+        else if (key == 'd')
+            translate[0] += translateInc;
+        else if (key == 'w')
+            translate[1] += translateInc;
+        else if (key == 's')
+            translate[1] -= translateInc;
+        else if (key == 'q')
+            translate[2] -= translateInc;
+        else if (key == 'e')
+            translate[2] += translateInc;
 
         // reset
         else if (key == 'r' || key == 'R') {
@@ -408,6 +425,9 @@ async function init() {
             angles[1] = anglesReset[1];
             angles[2] = anglesReset[2];
             zoomLevel = zoomReset;
+            translate[0] = translateReset[0];
+            translate[1] = translateReset[1];
+            translate[2] = translateReset[2];
         }
 
         // create a new shape and do a redo a draw
