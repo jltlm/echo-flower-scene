@@ -18,9 +18,9 @@ var updateDisplay = true;
 var anglesReset = [-20.0, 30.0, 0.0, 0.0];
 var angles = [-20.0, 30.0, 0.0, 0.0];
 var angleInc = 5.0;
-var zoomLevel = 1;
-var zoomInc = .5;
-var zoomReset = 1;
+var zoomLevel = 2;
+var zoomInc = .1;
+var zoomReset = 2;
 objModels = {}
 const objLoader = new ObjLoader();
 
@@ -261,7 +261,7 @@ async function createNewShape() {
 
     pipeline = device.createRenderPipeline(pipelineDesc);
 
-    uniformValues = new Float32Array(angles);
+    uniformValues = new Float32Array(angles.concat([zoomLevel, zoomLevel, zoomLevel, 0]));
     uniformBuffer = device.createBuffer({
         size: uniformValues.byteLength,
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
