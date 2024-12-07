@@ -30,7 +30,7 @@ function makeBridge(x, y, z, size) {
     }
     let c = size / 4 - b; // for even spacing of bottom boards
     for (let i = 0; i < 4; i++) { // bottom boards
-        makeRectPrism(x + (size / 4 * i) + c / 4 * i, y-a, z, b, a, size);
+        makeRectPrism(x + (size / 4 * i) + c / 4 * i, y+b*2-a, z, b, a, size);
     }
 }
 
