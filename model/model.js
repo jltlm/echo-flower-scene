@@ -3,7 +3,7 @@ import { makeRectPrism, makeCylinder, addObj } from "./basic.js";
 // models size constants
 const AREADIM = 0.2;
 const FRISKFACEDIM = 0.2;
-
+const SEALEVEL = AREADIM/5;
 
 // takes translation coords around center of object
 function makeFrisk(x,y,z) {
@@ -35,10 +35,44 @@ function makeBridge(x, y, z, size) {
     }
 }
 
+function makeLand(x, y, z, size) {
+    makeRectPrism(x, y-size/5, z, size, size/5, size);
+}
+
 // makes the water part of the scene
 function makeWater() {
     makeRectPrism(-AREADIM, -AREADIM, -AREADIM+0.2, 2*AREADIM, AREADIM/5, 2*AREADIM);
 }
+
+// // procedural generation
+// // takes in a [x, y] of a place to start generating land
+// // returns a nested array of land vs bridge vs empty (open water) spots
+// // as L, B, and X
+// function generateGroundMap(axiom) {
+//     // bounds are a 4x4
+//     let ax = axiom[0];
+//     let ay = axiom[1];
+//     let land = "L";
+//     let bridge = "B";
+//     let empty = "X";
+
+//     let map = new Map();
+//     let checked = new Set();
+
+//     map.set(axiom, land);
+//     checked.add(axiom);
+//     while (map.length < 16) {
+
+//     }
+    
+
+//     for (let x = 0; x < 4; x++) {
+//         for (let y = 0; y < 4; y++) {
+
+//         }
+//     }
+
+// }
 
 // procedural generation
 // (getting there)
@@ -106,12 +140,14 @@ function frisk() {
 }
 
 // MAKES THE SCENE
+// scene is a 4x4 place. a bridge is 1, a land is 1
 export function makeScene() {
     makeWater();
-    makeBridge(-AREADIM, -AREADIM+AREADIM/5+0.05, 0, AREADIM);
+    makeBridge(-AREADIM, -AREADIM+AREADIM/5+0.05, 0, AREADIM/2);
+    makeLand(0, -AREADIM+AREADIM/5+0.05, 0, AREADIM/2)
     // makeFrisk(0, 0, 0);
-    frisk()
-    makeFlower(0,0,0,.3, 5)
+    // frisk()
+    // makeFlower(0,0,0,.3, 5)
 };
 
 // // sets up the bounds for the area. A cube of lines, would require point line list thing
