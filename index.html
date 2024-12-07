@@ -1,51 +1,55 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flowers :3</title>
-    <script type="text/javascript" src="./shader/shaders.js"></script>
-    <script type="text/javascript" src="./globals.js"></script>
-    <script src="https://wgpu-matrix.org/dist/3.x/wgpu-matrix.min.js"></script>
-    <script type="module" src="./model/basic.js"></script>
-    <script type="module" src="./model/model.js"></script>
-    <script type="module" src="./main.js"></script>
-  
-  </head>
-  <body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flowers :3</title>
+  <script type="text/javascript" src="./shader/shaders.js"></script>
+  <script type="text/javascript" src="./globals.js"></script>
+  <script src="https://wgpu-matrix.org/dist/3.x/wgpu-matrix.min.js"></script>
+  <script type="module" src="./model/basic.js"></script>
+  <script type="module" src="./model/model.js"></script>
+  <script type="module" src="./main.js"></script>
+
+</head>
+
+<body>
   <h1>Final Project</h1>
   <table>
-      <tr>
-          <td><canvas id="webgpu" width="1200" height="900">
-            Your browser does not support the HTML5 canvas element.
-          </canvas></td>
-          
-          <td>
-              <h3>Controls</h3>
-              
-              <table border="1">
-              <tbody>
-              <tr>
-              <td>x, y, z</td>
-              <td>Rotate the current shape forward about the x, y, or z axis</td>
-              </tr>
-              <tr>
-              <td>X, Y, Z</td>
-              <td>Rotate the current shape backward about the x, y, or z axis</td>
-              </tr>
-              <tr>
-              <td>r, R</td>
-              <td>Reset the figure to its original orientation</td>
-              </tr>
-              <tr>
-                <td>+, -</td>
-                <td>Zoom the figure</td>
-                </tr>
-              </tbody>
-              </table>
-              
-          </td>
-      </tr>
+    <tr>
+      <td><canvas id="webgpu" width="1200" height="900">
+          Your browser does not support the HTML5 canvas element.
+        </canvas></td>
+
+      <td>
+        <h3>Controls</h3>
+
+        <table border="1">
+          <tr>
+            <td>x, y, z</td>
+            <td>Rotate the current shape forward about the x, y, or z axis</td>
+          </tr>
+          <tr>
+            <td>X, Y, Z</td>
+            <td>Rotate the current shape backward about the x, y, or z axis</td>
+          </tr>
+          <tr>
+            <td>w, a, s, d</td>
+            <td>translate figure up, left, down, or right on screen</td>
+          </tr>
+          <tr>
+            <td>=, -</td>
+            <td>Zoom the figure (forward / backward, if you will)</td>
+          </tr>
+          <tr>
+            <td>r, R</td>
+            <td>Reset the figure to its original orientation</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
   </table>
 </body>
+
 </html>

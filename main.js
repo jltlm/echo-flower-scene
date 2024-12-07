@@ -15,14 +15,16 @@ let uniformBuffer = null;
 
 // Other globals with default values;
 var updateDisplay = true;
-var anglesReset = [-20.0, 30.0, 0.0, 0.0];
-var angles = [-20.0, 30.0, 0.0, 0.0];
+var anglesReset = [-10.0, 30.0, 0.0, 0.0];
+var angles = [-10.0, 30.0, 0.0, 0.0];
+// var anglesReset = [0, 0, 0, 0];
+// var angles = [0, 0, 0, 0];
 var angleInc = 5.0;
-var zoomLevel = 2;
+var zoomLevel = 5;
 var zoomInc = .1;
-var zoomReset = 2;
-var translateReset = [0, 0, 0, 0];
-var translate = [0, 0, 0, 0];
+var zoomReset = 5;
+var translateReset = [0, 0.1, 0.3, 0];
+var translate = [0, 0.1, 0.3, 0];
 var translateInc = 0.02;
 objModels = {}
 const objLoader = new ObjLoader();
@@ -264,9 +266,32 @@ async function createNewShape() {
 
     pipeline = device.createRenderPipeline(pipelineDesc);
 
+    const degToRad = d => d * Math.PI / 180;
+
+    let guh = mat4.perspective(
+        degToRad(60),
+        canvas.clientWidth / canvas.clientHeight,
+        0,      // zNear
+        -2000,   // zFar
+    );
+    // all of the z stuff- zNear, zFar, the z row of the 
+    // matrix, have been made negative, so I inverted them
+    guh[10] *= -1.0;
+    guh[11] *= -1.0;
+    guh[14] *= -1.0;
+    guh[15] = 1.0;
+    console.log(guh)
+
     uniformValues = new Float32Array(angles
-        .concat([zoomLevel, zoomLevel, zoomLevel, 0])
-        .concat(translate));
+    .concat([zoomLevel, zoomLevel, zoomLevel, 0])
+    .concat(translate)
+    .concat(...guh));
+
+    // convert to radians before sending to shader
+    uniformValues[0] = radians(angles[0]);
+    uniformValues[1] = radians(angles[1]); 
+    uniformValues[2] = radians(angles[2]);
+
     uniformBuffer = device.createBuffer({
         size: uniformValues.byteLength,
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
@@ -342,14 +367,6 @@ function draw() {
         },
     };
 
-    // convert to radians before sending to shader
-    uniformValues[0] = radians(angles[0]);
-    uniformValues[1] = radians(angles[1]);
-    uniformValues[2] = radians(angles[2]);
-
-    // copy the values from JavaScript to the GPU
-    device.queue.writeBuffer(uniformBuffer, 0, uniformValues);
-
     // create the render pass
     commandEncoder = device.createCommandEncoder();
     passEncoder = commandEncoder.beginRenderPass(renderPassDesc);
@@ -402,7 +419,7 @@ async function init() {
             angles[1] += angleInc;
         else if (key == 'Z')
             angles[2] += angleInc;
-        else if (key == '+')
+        else if (key == '=')
             zoomLevel += zoomInc;
         else if (key == '-')
             zoomLevel -= zoomInc;
@@ -414,10 +431,10 @@ async function init() {
             translate[1] += translateInc;
         else if (key == 's')
             translate[1] -= translateInc;
-        else if (key == 'q')
-            translate[2] -= translateInc;
-        else if (key == 'e')
-            translate[2] += translateInc;
+        // else if (key == 'q')
+        //     translate[2] -= translateInc;
+        // else if (key == 'e')
+        //     translate[2] += translateInc;
 
         // reset
         else if (key == 'r' || key == 'R') {

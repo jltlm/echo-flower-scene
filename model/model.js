@@ -1,9 +1,8 @@
 import { makeRectPrism, makeCylinder, addObj } from "./basic.js";
 
 // models size constants
-const AREADIM = 0.2;
+const AREADIM = 0.1;
 const FRISKFACEDIM = 0.2;
-const SEALEVEL = AREADIM/5;
 
 // takes translation coords around center of object
 function makeFrisk(x,y,z) {
@@ -23,10 +22,10 @@ function makeBridge(x, y, z, size) {
     let a = size / 27;
     let b = size / 11;
     for (let i = 0; i < 9; i++) { // top boards, supports
-        makeRectPrism(x, y, z + (size / 9 * i), size, a, b);
+        makeRectPrism(x, y+b*2, z + (size / 9 * i), size, a, b);
         if (i % 2) {
-            makeCylinder(x+b, y-b*2, z + (size / 9 * i), b/2, 2*b);
-            makeCylinder(x+size-b, y-b*2, z + (size / 9 * i), b/2, 2*b);
+            makeCylinder(x+b, y, z + (size / 9 * i), b/2, 2*b);
+            makeCylinder(x+size-b, y, z + (size / 9 * i), b/2, 2*b);
         }
     }
     let c = size / 4 - b; // for even spacing of bottom boards
@@ -36,13 +35,34 @@ function makeBridge(x, y, z, size) {
 }
 
 function makeLand(x, y, z, size) {
-    makeRectPrism(x, y-size/5, z, size, size/5, size);
+    makeRectPrism(x, y, z, size, size/5, size);
 }
 
 // makes the water part of the scene
-function makeWater() {
-    makeRectPrism(-AREADIM, -AREADIM, -AREADIM+0.2, 2*AREADIM, AREADIM/5, 2*AREADIM);
+function makeWater(x, y, z, waterDepth) {
+    makeRectPrism(x, y, z, 2*AREADIM, waterDepth, 2*AREADIM);
 }
+
+function frisk() {
+    addObj(objModels.friskObj, 0, -.1, 0, 0.05)
+}
+
+// MAKES THE SCENE
+// scene is a 4x4 place. a bridge is 1, a land is 1
+// 
+export function makeScene() {
+    const bottom = -AREADIM;
+    const waterDepth = AREADIM/4;
+    const waterLevel = bottom + waterDepth;
+
+    makeWater(-AREADIM, bottom, -AREADIM, waterDepth);
+
+    makeBridge(-AREADIM, waterLevel, -AREADIM, AREADIM/2);
+    makeLand(0, waterLevel, -AREADIM, AREADIM/2)
+    // makeFrisk(0, 0, 0);
+    // frisk()
+    // makeFlower(0,0,0,.3, 5)
+};
 
 // // procedural generation
 // // takes in a [x, y] of a place to start generating land
@@ -135,20 +155,6 @@ function makeFlower(x, y, z, height, iterations) {
 
 }
 
-function frisk() {
-    addObj(objModels.friskObj, 0, -.1, 0, 0.05)
-}
-
-// MAKES THE SCENE
-// scene is a 4x4 place. a bridge is 1, a land is 1
-export function makeScene() {
-    makeWater();
-    makeBridge(-AREADIM, -AREADIM+AREADIM/5+0.05, 0, AREADIM/2);
-    makeLand(0, -AREADIM+AREADIM/5+0.05, 0, AREADIM/2)
-    // makeFrisk(0, 0, 0);
-    // frisk()
-    // makeFlower(0,0,0,.3, 5)
-};
 
 // // sets up the bounds for the area. A cube of lines, would require point line list thing
 // // UNUSED
