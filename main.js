@@ -4,13 +4,13 @@ import * as mat4 from './util/mat42.js';
 import { ObjLoader } from './util/objLoader.js';
 import { makeCylinder, radians } from './model/basic.js';
 import { makeScene } from './model/model.js';
-import { makeRectPrism } from './model/basic.js';
 
 // buffers
 let myVertexBuffer = null;
 let myBaryBuffer = null;
 let myIndexBuffer = null;
 let myUvBuffer = null;
+let myTexBuffer = null;
 let uniformBuffer = null;
 
 // Other globals with default values;
@@ -99,6 +99,7 @@ async function createNewShape() {
     indices = [];
     bary = [];
     uvs = [];
+    tex = [];
 
     // make the scene
 
@@ -161,6 +162,33 @@ async function createNewShape() {
 
     writeArrayUvs.set(uvs); // this copies the buffer
     myUvBuffer.unmap();
+
+    // set up the tex buffer - which texture each
+    const texAttribDesc = {
+        shaderLocation: 3,
+        offset: 0,
+        format: 'float32'
+    };
+
+    // this sets up our buffer layout
+    const texBufferLayoutDesc = {
+        attributes: [texAttribDesc],
+        arrayStride: Float32Array.BYTES_PER_ELEMENT, // sizeof(float) * 1 floats
+        stepMode: 'vertex'
+    };
+
+    // buffer layout and filling
+    const texBufferDesc = {
+        size: tex.length * Float32Array.BYTES_PER_ELEMENT,
+        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+        mappedAtCreation: true
+    };
+    myTexBuffer = device.createBuffer(texBufferDesc);
+    let writeArrayTex =
+        new Float32Array(myTexBuffer.getMappedRange());
+
+    writeArrayTex.set(tex); // this copies the buffer
+    myTexBuffer.unmap();
 
     // create and bind bary buffer
     const baryAttribDesc = {
@@ -231,6 +259,15 @@ async function createNewShape() {
                     viewDimension: "2d",
                     multisampled: false,
                 },
+            },
+            {
+                binding: 3,
+                visibility: GPUShaderStage.FRAGMENT,
+                texture: {
+                    sampleType: "float",
+                    viewDimension: "2d",
+                    multisampled: false,
+                },
             }
         ]
     });
@@ -245,7 +282,8 @@ async function createNewShape() {
         vertex: {
             module: shaderModule,
             entryPoint: 'vs_main',
-            buffers: [vertexBufferLayoutDesc, myBaryBufferLayoutDesc, uvBufferLayoutDesc]
+            buffers: [vertexBufferLayoutDesc, myBaryBufferLayoutDesc,
+                uvBufferLayoutDesc, texBufferLayoutDesc]
         },
         fragment: {
             module: shaderModule,
@@ -276,11 +314,13 @@ async function createNewShape() {
     );
     // all of the z stuff- zNear, zFar, the z row of the 
     // matrix, have been made negative, so I inverted them
+    // IF EVERYTHING ELSE IS BACKWARDS (i'm looking at you,
+    // controls) to an inconvenient extent, IT'S BECAUSE OF
+    // THIS HERE AND I SHALL HAVE TO FIX IT
     guh[10] *= -1.0;
     guh[11] *= -1.0;
     guh[14] *= -1.0;
     guh[15] = 1.0;
-    console.log(guh)
 
     uniformValues = new Float32Array(angles
     .concat([zoomLevel, zoomLevel, zoomLevel, 0])
@@ -301,14 +341,14 @@ async function createNewShape() {
 
     // // now create the textures to render
     // // now create the texture to render
-    const url = './assets/texture1.jpg';
-    imageSource = await loadImageBitmap(url);
+    const url = './assets/woodTexture.jpg';
     const waterURL = './assets/water.jpg';
     const skinURL = './assets/friskskin.jpg';
     const shirtURL = './assets/friskskinbase.jpg';
     const pantsURL = './assets/friskpants.jpg';
     const shoeURL = './assets/friskshoes.jpg';
-    // imageSource = await loadImageBitmap(waterURL);
+    let imageSource2 = await loadImageBitmap(waterURL);
+    imageSource = await loadImageBitmap(url);
     texture = device.createTexture({
         label: "image",
         format: 'rgba8unorm',
@@ -321,6 +361,20 @@ async function createNewShape() {
         { source: imageSource, flipY: true },
         { texture: texture },
         { width: imageSource.width, height: imageSource.height, depthOrArrayLayers: 1 },
+    );
+
+    let texture2 = device.createTexture({
+        label: "image",
+        format: 'rgba8unorm',
+        size: [imageSource2.width, imageSource2.height],
+        usage: GPUTextureUsage.TEXTURE_BINDING |
+            GPUTextureUsage.COPY_DST |
+            GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+    device.queue.copyExternalImageToTexture(
+        { source: imageSource2, flipY: true },
+        { texture: texture2 },
+        { width: imageSource2.width, height: imageSource2.height, depthOrArrayLayers: 1 },
     );
 
     const samplerTex = device.createSampler();
@@ -336,6 +390,7 @@ async function createNewShape() {
             },
             { binding: 1, resource: samplerTex },
             { binding: 2, resource: texture.createView() },
+            { binding: 3, resource: texture2.createView() },
         ],
     });
 
@@ -376,6 +431,7 @@ function draw() {
     passEncoder.setVertexBuffer(0, myVertexBuffer);
     passEncoder.setVertexBuffer(1, myBaryBuffer);
     passEncoder.setVertexBuffer(2, myUvBuffer);
+    passEncoder.setVertexBuffer(3, myTexBuffer);
     passEncoder.setIndexBuffer(myIndexBuffer, "uint16");
     passEncoder.drawIndexed(indices.length, 1);
     passEncoder.end();
@@ -431,10 +487,10 @@ async function init() {
             translate[1] += translateInc;
         else if (key == 's')
             translate[1] -= translateInc;
-        // else if (key == 'q')
-        //     translate[2] -= translateInc;
-        // else if (key == 'e')
-        //     translate[2] += translateInc;
+        else if (key == 'q')
+            translate[2] -= translateInc;
+        else if (key == 'e')
+            translate[2] += translateInc;
 
         // reset
         else if (key == 'r' || key == 'R') {

@@ -19,7 +19,7 @@ import * as mat4 from '../util/mat42.js';
  * @param {*} h height
  * @param {*} d depth
  */
-export function makeRectPrism(x, y, z, w, h, d)  {
+export function makeRectPrism(x, y, z, w, h, d, t)  {
     // NOTE: this uses quads, in the order of
     // (1) - (2)
     //  |     |
@@ -27,31 +27,30 @@ export function makeRectPrism(x, y, z, w, h, d)  {
 
     // front 
     addQuad( x+w, y, z, x, y, z,
-        x+w, y+h, z, x, y+h, z, );
+            x+w, y+h, z, x, y+h, z, t,);
 
     // back
     addQuad( x, y, d+z, x+w, y, d+z,
-        x, y+h, d+z, x+w, y+h, d+z, );
-
+            x, y+h, d+z, x+w, y+h, d+z, t,);
     // top
     addQuad(x, y+h, z+d, x+w, y+h, z+d, 
-        x, y+h, z, x+w, y+h, z, );
+            x, y+h, z, x+w, y+h, z, t,);
 
     // bottom
     addQuad( x+w, y, z+d, x, y, z+d, 
-        x+w, y, z, x, y, z,);
+            x+w, y, z, x, y, z, t,);
 
     // left
     addQuad( x+w, y+h, z, x+w, y+h, z+d,
-        x+w, y, z, x+w, y, z+d, );
+            x+w, y, z, x+w, y, z+d, t,);
 
     // right
     addQuad( x, y+h, z+d, x, y+h, z,
-        x, y, z+d, x, y, z, );
+            x, y, z+d, x, y, z, t,);
 }
 
 
-export function makeCylinder (x, y, z, radius, height,
+export function makeCylinder (x, y, z, radius, height, t,
             radialdivision=8, heightdivision=1){
     let heightMax = height + y;
     let heightMin = y;
@@ -73,12 +72,12 @@ export function makeCylinder (x, y, z, radius, height,
         // top
         addTriangle(point2x, heightMax, point2z, 
             point1x, heightMax, point1z, 
-            x, heightMax, z);
+            x, heightMax, z, t);
 
         // bottom
         addTriangle(x, heightMin, z, 
             point1x, heightMin, point1z,
-            point2x, heightMin,point2z);
+            point2x, heightMin, point2z, t);
         
         for (let j = 0; j < heightdivision; j++) {
             let divHeightStart = divheight * j + heightMin;
@@ -88,7 +87,7 @@ export function makeCylinder (x, y, z, radius, height,
                 point1x, divHeightStart, point1z,
                 point2x, divHeightEnd, point2z,
                 point1x, divHeightEnd, point1z,
-            );
+                t, );
         }
     }
 }
@@ -192,6 +191,7 @@ export function addObj(model, x, y, z, scale=1) {
             v += y;
         } else if (i%3 == 2) { // if z coord
             v += z;
+            // tex.push(1)
         }
 
         return v;
@@ -214,13 +214,16 @@ export function addObj(model, x, y, z, scale=1) {
             bary.push (0.0);
         }
     });
-    uvs.push(...obj.uvs)    
+    uvs.push(...obj.uvs);
 }
 
-// arbitrary defaults
-export function addTriangle (x0,y0,z0, x1,y1,z1, x2,y2,z2,
+// arbitrary defaults for uvs
+export function addTriangle (x0,y0,z0, x1,y1,z1, x2,y2,z2, t=1,
                     uvx0=0,uvy0=0, uvx1=1,uvy1=0, uvx2=1,uvy2=1) {
     var nverts = points.length / 3;
+    if (t == null || t == undefined) {
+        t = 1;
+    }
     
     // push first vertex
     points.push(x0);  bary.push (1.0);
@@ -228,6 +231,7 @@ export function addTriangle (x0,y0,z0, x1,y1,z1, x2,y2,z2,
     points.push(z0);  bary.push (0.0);
     uvs.push(uvx0);
     uvs.push(uvy0);
+    tex.push(t);
     indices.push(nverts);
     nverts++;
     
@@ -237,6 +241,7 @@ export function addTriangle (x0,y0,z0, x1,y1,z1, x2,y2,z2,
     points.push(z1); bary.push (0.0);
     uvs.push(uvx1);
     uvs.push(uvy1);
+    tex.push(t);
     indices.push(nverts);
     nverts++
     
@@ -246,6 +251,7 @@ export function addTriangle (x0,y0,z0, x1,y1,z1, x2,y2,z2,
     points.push(z2); bary.push (1.0);
     uvs.push(uvx2);
     uvs.push(uvy2);
+    tex.push(t);
     indices.push(nverts);
     nverts++;
 
@@ -256,9 +262,9 @@ export function addTriangle (x0,y0,z0, x1,y1,z1, x2,y2,z2,
  top right, bottom left, bottom right
  (or some rotation of that)
  */
-export function addQuad (x0,y0,z0,x1,y1,z1,x2,y2,z2,x3,y3,z3) {
-    addTriangle(x0,y0,z0,x1,y1,z1,x2,y2,z2,0,0,1,0,0,1);
-    addTriangle(x1,y1,z1,x3,y3,z3,x2,y2,z2,1,0,1,1,0,1);
+export function addQuad (x0,y0,z0,x1,y1,z1,x2,y2,z2,x3,y3,z3, t=1) {
+    addTriangle(x0,y0,z0,x1,y1,z1,x2,y2,z2,t,0,0,1,0,0,1);
+    addTriangle(x1,y1,z1,x3,y3,z3,x2,y2,z2,t,1,0,1,1,0,1);
 }
 
 /**

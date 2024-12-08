@@ -4,9 +4,14 @@ import { makeRectPrism, makeCylinder, addObj } from "./basic.js";
 const AREADIM = 0.1;
 const FRISKFACEDIM = 0.2;
 
+// textures / colors!!!
+// 1 for wood (texture)
+// 2 for water (texture)
+// 3 for land (color)
+
 // takes translation coords around center of object
 function makeFrisk(x,y,z) {
-    makeCylinder(x, y, z, 0.08,0.1,12,1);
+    makeCylinder(x, y, z, 0.08,0.1, 12,1);
     makeCylinder(x, y-0.05, z, 0.05, 0.08, 12);
     makeCylinder(x, y-0.14, z, 0.08, 0.1, 12);
     makeCylinder(x + 0.1, y-0.14, z, 0.04, 0.1, 12);
@@ -22,29 +27,29 @@ function makeBridge(x, y, z, size) {
     let a = size / 27;
     let b = size / 11;
     for (let i = 0; i < 9; i++) { // top boards, supports
-        makeRectPrism(x, y+b*2, z + (size / 9 * i), size, a, b);
+        makeRectPrism(x, y+b*2, z + (size / 9 * i), size, a, b, 1);
         if (i % 2) {
-            makeCylinder(x+b, y, z + (size / 9 * i), b/2, 2*b);
-            makeCylinder(x+size-b, y, z + (size / 9 * i), b/2, 2*b);
+            makeCylinder(x+b, y, z + (size / 9 * i), b/2, 2*b, 1);
+            makeCylinder(x+size-b, y, z + (size / 9 * i), b/2, 2*b, 1);
         }
     }
     let c = size / 4 - b; // for even spacing of bottom boards
     for (let i = 0; i < 4; i++) { // bottom boards
-        makeRectPrism(x + (size / 4 * i) + c / 4 * i, y+b*2-a, z, b, a, size);
+        makeRectPrism(x + (size / 4 * i) + c / 4 * i, y+b*2-a, z, b, a, size, 1);
     }
 }
 
 function makeLand(x, y, z, size) {
-    makeRectPrism(x, y, z, size, size/5, size);
+    makeRectPrism(x, y, z, size, size/5, size, 3);
 }
 
 // makes the water part of the scene
 function makeWater(x, y, z, waterDepth) {
-    makeRectPrism(x, y, z, 2*AREADIM, waterDepth, 2*AREADIM);
+    makeRectPrism(x, y, z, 2*AREADIM, waterDepth, 2*AREADIM, 2);
 }
 
-function frisk() {
-    addObj(objModels.friskObj, 0, -.1, 0, 0.05)
+function frisk(x, y, z) {
+    addObj(objModels.friskObj, x, y, z, 0.008)
 }
 
 // MAKES THE SCENE
@@ -57,10 +62,17 @@ export function makeScene() {
 
     makeWater(-AREADIM, bottom, -AREADIM, waterDepth);
 
-    makeBridge(-AREADIM, waterLevel, -AREADIM, AREADIM/2);
-    makeLand(0, waterLevel, -AREADIM, AREADIM/2)
+    makeBridge(-AREADIM/2, waterLevel, AREADIM/2, AREADIM/2);
+    makeLand(-AREADIM, waterLevel, 0, AREADIM/2)
+    makeLand(-AREADIM/2, waterLevel, 0, AREADIM/2)
+    makeLand(-AREADIM/2, waterLevel,  -AREADIM/2, AREADIM/2)
+    makeLand(0, waterLevel, 0, AREADIM/2)
+    makeLand(0, waterLevel, -AREADIM/2, AREADIM/2)
+    makeLand(AREADIM/2, waterLevel, -AREADIM/2, AREADIM/2)
+    makeBridge(0, waterLevel, -AREADIM, AREADIM/2);
+
     // makeFrisk(0, 0, 0);
-    // frisk()
+    // frisk(-AREADIM, waterLevel+AREADIM/10, -AREADIM);
     // makeFlower(0,0,0,.3, 5)
 };
 
