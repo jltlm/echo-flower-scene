@@ -473,7 +473,6 @@ async function loadImageBitmap(url) {
 // Entry point to our application
 async function init() {
     // initiate object loader, load objects
-    objModels.blockObj = objLoader.parse(await objLoader.load("./assets/obj/block.obj"));
     objModels.friskObj = objLoader.parse(await objLoader.load("./assets/obj/frisk.obj"));
 
     // get the textures
