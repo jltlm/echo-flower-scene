@@ -29,6 +29,4 @@ let verticesSize,
   tex,
   trans,
   modelViewMatrix,
-  imageSource,
-  objModels,
-  texture;
+  objModels;

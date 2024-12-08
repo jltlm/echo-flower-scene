@@ -16,8 +16,9 @@ function getShader() {
 
     @group(0) @binding(0) var<uniform> uni : ViewTransforms;
     @group(0) @binding(1) var TexSampler: sampler;
-    @group(0) @binding(2) var Texture: texture_2d<f32>;
-    @group(0) @binding(3) var Texture2: texture_2d<f32>;
+    @group(0) @binding(2) var WaterTexture: texture_2d<f32>;
+    @group(0) @binding(3) var FriskTexture: texture_2d<f32>;
+    @group(0) @binding(4) var WoodTexture: texture_2d<f32>;
 
     @vertex
     fn vs_main( @location(0) inPos: vec3<f32>,
@@ -74,17 +75,20 @@ function getShader() {
     @fragment
     fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
         var fragColor = vec4 (1.0, 0.0, 0.0, 1.0);;
-        var fragColor1 = textureSample(Texture, TexSampler, in.uv);
-        var fragColor2 = textureSample(Texture2, TexSampler, in.uv);
-        var land = vec4 (0.11, 0.18, 0.11, 1.0);;
+        var water = textureSample(WaterTexture, TexSampler, in.uv);
+        var wood = textureSample(WoodTexture, TexSampler, in.uv);
+        var frisk = textureSample(FriskTexture, TexSampler, in.uv);
+        var land = vec4(0.11, 0.18, 0.11, 1.0);;
         var flower = vec4 (1.0, 0.0, 0.0, 1.0);;
 
-        if (in.tex > 2) {
+        if (in.tex > 3) {
             fragColor = land;
+        } else if (in.tex > 2) {
+            fragColor = wood;
         } else if (in.tex > 1) {
-            fragColor = fragColor2; // water texture
+            fragColor = frisk;
         } else if (in.tex > 0) {
-            fragColor = fragColor1; // wood texture
+            fragColor = water;
         }
 
         // bary

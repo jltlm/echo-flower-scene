@@ -26,9 +26,11 @@ var zoomReset = 5;
 var translateReset = [0, 0.1, 0.3, 0];
 var translate = [0, 0.1, 0.3, 0];
 var translateInc = 0.02;
-objModels = {}
+
+objModels = {};
 const objLoader = new ObjLoader();
 
+let textureImageSource = {};
 
 // set up the shader var's
 function setShaderInfo() {
@@ -268,7 +270,17 @@ async function createNewShape() {
                     viewDimension: "2d",
                     multisampled: false,
                 },
+            },
+            {
+                binding: 4,
+                visibility: GPUShaderStage.FRAGMENT,
+                texture: {
+                    sampleType: "float",
+                    viewDimension: "2d",
+                    multisampled: false,
+                },
             }
+
         ]
     });
 
@@ -340,41 +352,50 @@ async function createNewShape() {
     device.queue.writeBuffer(uniformBuffer, 0, uniformValues);
 
     // // now create the textures to render
-    // // now create the texture to render
-    const url = './assets/woodTexture.jpg';
-    const waterURL = './assets/water.jpg';
-    const skinURL = './assets/friskskin.jpg';
-    const shirtURL = './assets/friskskinbase.jpg';
-    const pantsURL = './assets/friskpants.jpg';
-    const shoeURL = './assets/friskshoes.jpg';
-    let imageSource2 = await loadImageBitmap(waterURL);
-    imageSource = await loadImageBitmap(url);
-    texture = device.createTexture({
+    let waterImageSource = textureImageSource.water;
+    let woodImageSource = textureImageSource.wood;
+    let friskImageSource = textureImageSource.frisk;
+    
+    let woodTexture = device.createTexture({
         label: "image",
         format: 'rgba8unorm',
-        size: [imageSource.width, imageSource.height],
+        size: [woodImageSource.width, woodImageSource.height],
         usage: GPUTextureUsage.TEXTURE_BINDING |
             GPUTextureUsage.COPY_DST |
             GPUTextureUsage.RENDER_ATTACHMENT,
     });
     device.queue.copyExternalImageToTexture(
-        { source: imageSource, flipY: true },
-        { texture: texture },
-        { width: imageSource.width, height: imageSource.height, depthOrArrayLayers: 1 },
+        { source: woodImageSource, flipY: true },
+        { texture: woodTexture },
+        { width: woodImageSource.width, height: woodImageSource.height, depthOrArrayLayers: 1 },
     );
 
-    let texture2 = device.createTexture({
+    let waterTexture = device.createTexture({
         label: "image",
         format: 'rgba8unorm',
-        size: [imageSource2.width, imageSource2.height],
+        size: [waterImageSource.width, waterImageSource.height],
         usage: GPUTextureUsage.TEXTURE_BINDING |
             GPUTextureUsage.COPY_DST |
             GPUTextureUsage.RENDER_ATTACHMENT,
     });
     device.queue.copyExternalImageToTexture(
-        { source: imageSource2, flipY: true },
-        { texture: texture2 },
-        { width: imageSource2.width, height: imageSource2.height, depthOrArrayLayers: 1 },
+        { source: waterImageSource, flipY: true },
+        { texture: waterTexture },
+        { width: waterImageSource.width, height: waterImageSource.height, depthOrArrayLayers: 1 },
+    );
+
+    let friskTexture = device.createTexture({
+        label: "image",
+        format: 'rgba8unorm',
+        size: [friskImageSource.width, friskImageSource.height],
+        usage: GPUTextureUsage.TEXTURE_BINDING |
+            GPUTextureUsage.COPY_DST |
+            GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+    device.queue.copyExternalImageToTexture(
+        { source: friskImageSource, flipY: true },
+        { texture: friskTexture },
+        { width: friskImageSource.width, height: friskImageSource.height, depthOrArrayLayers: 1 },
     );
 
     const samplerTex = device.createSampler();
@@ -389,8 +410,9 @@ async function createNewShape() {
                 },
             },
             { binding: 1, resource: samplerTex },
-            { binding: 2, resource: texture.createView() },
-            { binding: 3, resource: texture2.createView() },
+            { binding: 2, resource: waterTexture.createView() },
+            { binding: 3, resource: friskTexture.createView() },
+            { binding: 4, resource: woodTexture.createView() },
         ],
     });
 
@@ -453,6 +475,14 @@ async function init() {
     // initiate object loader, load objects
     objModels.blockObj = objLoader.parse(await objLoader.load("./assets/obj/block.obj"));
     objModels.friskObj = objLoader.parse(await objLoader.load("./assets/obj/frisk.obj"));
+
+    // get the textures
+    const friskTextureUrl = './assets/friskTexture.png';
+    const woodTextureUrl = './assets/woodTexture.jpg';
+    const waterTextureUrl = './assets/waterTexture.jpg';
+    textureImageSource.wood = await loadImageBitmap(woodTextureUrl);
+    textureImageSource.water = await loadImageBitmap(waterTextureUrl);
+    textureImageSource.frisk = await loadImageBitmap(friskTextureUrl);
 
     // Retrieve the canvas
     canvas = document.querySelector("canvas");

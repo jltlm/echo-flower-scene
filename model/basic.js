@@ -181,7 +181,7 @@ export function radians(degrees)
 }
 
 // use imported OBJs
-export function addObj(model, x, y, z, scale=1) {
+export function addObj(model, x, y, z, t, scale=1) {
     let obj = model;
     points.push(...obj.positions.map((v, i) => {
         v*=scale;
@@ -191,7 +191,7 @@ export function addObj(model, x, y, z, scale=1) {
             v += y;
         } else if (i%3 == 2) { // if z coord
             v += z;
-            // tex.push(1)
+            tex.push(t)
         }
 
         return v;
