@@ -23,8 +23,8 @@ var angleInc = 5.0;
 var zoomLevel = 5;
 var zoomInc = .1;
 var zoomReset = 5;
-var translateReset = [0, 0.1, 0.3, 0];
-var translate = [0, 0.1, 0.3, 0];
+var translateReset = [0, 0.1, 0.5, 0];
+var translate = [0, 0.1, 0.5, 0];
 var translateInc = 0.02;
 
 objModels = {};
@@ -495,29 +495,29 @@ async function init() {
 
         //  incremental rotation
         if (key == 'x')
-            angles[0] -= angleInc;
-        else if (key == 'y')
-            angles[1] -= angleInc;
-        else if (key == 'z')
-            angles[2] -= angleInc;
-        else if (key == 'X')
             angles[0] += angleInc;
-        else if (key == 'Y')
+        else if (key == 'y')
             angles[1] += angleInc;
-        else if (key == 'Z')
+        else if (key == 'z')
             angles[2] += angleInc;
+        else if (key == 'X')
+            angles[0] -= angleInc;
+        else if (key == 'Y')
+            angles[1] -= angleInc;
+        else if (key == 'Z')
+            angles[2] -= angleInc;
         else if (key == '=')
             zoomLevel += zoomInc;
         else if (key == '-')
             zoomLevel -= zoomInc;
         else if (key == 'a')
-            translate[0] -= translateInc;
-        else if (key == 'd')
             translate[0] += translateInc;
+        else if (key == 'd')
+            translate[0] -= translateInc;
         else if (key == 'w')
-            translate[1] += translateInc;
-        else if (key == 's')
             translate[1] -= translateInc;
+        else if (key == 's')
+            translate[1] += translateInc;
         else if (key == 'q')
             translate[2] -= translateInc;
         else if (key == 'e')
