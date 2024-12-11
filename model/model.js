@@ -81,7 +81,11 @@ export function makeScene() {
     generateLand(-AREADIM + 0.18, waterLevel, 8, LANDDIM/2, 8, 'z', 'left');
     generateLand(-AREADIM + 0.19, waterLevel, 0, LANDDIM/2, 8, 'z', 'right');
     generateLand(-AREADIM + 0.2, waterLevel, 8, LANDDIM/2, 8, 'z', 'left');
-
+    generateLand(-AREADIM + 0.15, waterLevel, 0, LANDDIM/2, 11, 'z', 'left');
+    generateLand(-AREADIM + 0.15, waterLevel, -0.11, LANDDIM/2, 5, 'x', 'right');
+    generateLand(-AREADIM + 0.2, waterLevel, -0.11, LANDDIM/2, 2, 'z', 'right');
+    generateLand(-AREADIM + 0.2, waterLevel, -0.09, LANDDIM/2, 2, 'x', 'right');
+    generateLand(-AREADIM + 0.2, waterLevel, -0.09, LANDDIM/2, 3, 'x', 'right');
     // makeFlower(0,0,0,.3, 5)
 
     // assign these guys somehow
@@ -93,6 +97,15 @@ export function makeScene() {
 // // takes in a [x, y] of a place to start generating land
 // // returns a nested array of land vs bridge vs empty (open water) spots
 // // as L, B, and X
+
+
+
+// let 0 - land
+// let 1 - water
+// let [ - turn left
+// let ] - turn right
+
+
 
 function generateLand(x, y, z, size, freq, side, dir){
     if(side == 'x'){
