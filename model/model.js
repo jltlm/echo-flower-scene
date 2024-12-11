@@ -1,7 +1,8 @@
 import { makeRectPrism, makeCylinder, addObj } from "./basic.js";
 
 // models size constants
-const AREADIM = 0.1;
+const AREADIM = 1/10;
+const LANDDIM = 0.5/10;
 const FRISKFACEDIM = 0.2;
 
 // ===========================================
@@ -62,17 +63,19 @@ export function makeScene() {
     const landLevel = waterLevel+AREADIM/10;
 
     makeWater(-AREADIM, bottom, -AREADIM, waterDepth);
-
-    makeBridge(-AREADIM/2, waterLevel, AREADIM/2, AREADIM/2);
-    makeLand(-AREADIM, waterLevel, 0, AREADIM/2)
-    makeLand(-AREADIM/2, waterLevel, 0, AREADIM/2)
-    makeLand(-AREADIM/2, waterLevel,  -AREADIM/2, AREADIM/2)
-    makeLand(0, waterLevel, 0, AREADIM/2)
-    makeLand(0, waterLevel, -AREADIM/2, AREADIM/2)
-    makeLand(AREADIM/2, waterLevel, -AREADIM/2, AREADIM/2)
-    makeBridge(0, waterLevel, -AREADIM, AREADIM/2);
+    // makeLand(-AREADIM, waterLevel, 0, LANDDIM/2);
+    // makeBridge(-AREADIM/2, waterLevel, AREADIM/2, AREADIM/2);
+    // makeLand(-LANDDIM, waterLevel, 0, LANDDIM/2)
+    // makeLand(-LANDDIM/2, waterLevel, 0, LANDDIM/2)
+    // makeLand(-LANDDIM/2, waterLevel,  -LANDDIM/2, LANDDIM/2)
+    // makeLand(0, waterLevel, 0, LANDDIM/2)
+    // makeLand(0, waterLevel, -LANDDIM/2, LANDDIM/2)
+    // makeLand(LANDDIM/2, waterLevel, -LANDDIM/2, LANDDIM/2)
+    // makeBridge(0, waterLevel, -AREADIM, AREADIM/2);
 
     frisk(0, landLevel, 0);
+    generateLand(-AREADIM, waterLevel, 0, LANDDIM/2, 15, 'x', 'right');
+    // makeFlower(0,0,0,.3, 5)
 
     // assign these guys somehow
     lilypad(-AREADIM, waterLevel, -AREADIM);
@@ -83,6 +86,31 @@ export function makeScene() {
 // // takes in a [x, y] of a place to start generating land
 // // returns a nested array of land vs bridge vs empty (open water) spots
 // // as L, B, and X
+
+function generateLand(x, y, z, size, freq, side, dir){
+    if(side == 'x'){
+        if(dir == 'right'){
+            for(let l = 0; l < freq; l++){
+                makeLand(x + l*0.01, y, z, size);
+            }
+        }
+        if(dir == 'left'){
+            for(let l = 0; l < freq; l++){
+                makeLand(x - l*0.01, y, z, size);
+            }
+        }
+    }
+    if(side == 'z'){
+        for(let l = 0; l < freq; l++){
+            makeLand(x, y, z + l*0.01, size);
+        }
+        if(dir == 'left'){
+            for(let l = 0; l < freq; l++){
+                makeLand(x, y, z - l*0.01, size);
+            }
+        }
+    }
+}
 // function generateGroundMap(axiom) {
 //     // bounds are a 4x4
 //     let ax = axiom[0];
