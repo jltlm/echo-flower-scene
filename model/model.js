@@ -14,19 +14,6 @@ let textures = {
 }
 // ===========================================
 
-// takes translation coords around center of object
-function makeFrisk(x,y,z) {
-    makeCylinder(x, y, z, 0.08,0.1, 12,1);
-    makeCylinder(x, y-0.05, z, 0.05, 0.08, 12);
-    makeCylinder(x, y-0.14, z, 0.08, 0.1, 12);
-    makeCylinder(x + 0.1, y-0.14, z, 0.04, 0.1, 12);
-    makeCylinder(x - 0.1, y-0.14, z, 0.04, 0.1, 12);
-    makeCylinder(x - 0.025,y-0.24,z, 0.04, 0.25, 12);
-    makeCylinder(x + 0.025, y-0.24, z, 0.04, 0.25, 12);
-    makeRectPrism(x + 0.02,y-0.27, z-0.05, 0.04, 0.04, 0.05);
-    makeRectPrism(x-0.04,y-0.27, z-0.05, 0.04, 0.04, 0.05);
-}
-
 // translates bridge item to x, y, z. In a square of side length size
 function makeBridge(x, y, z, size) {
     let a = size / 27;
@@ -57,6 +44,14 @@ function frisk(x, y, z) {
     addObj(objModels.friskObj, x, y, z, textures.friskTex, 0.008)
 }
 
+function lilypad(x, y, z) {
+    addObj(objModels.lilypadObj, x, y, z, textures.landTex, 0.008)
+}
+
+function reeds(x, y, z) {
+    addObj(objModels.reedsObj, x, y, z, textures.woodTex, 0.01)
+}
+
 // MAKES THE SCENE
 // scene is a 4x4 place. a bridge is 1, a land is 1
 // 
@@ -78,9 +73,10 @@ export function makeScene() {
     makeBridge(0, waterLevel, -AREADIM, AREADIM/2);
 
     frisk(0, landLevel, 0);
-    // makeFlower(0,0,0,.3, 5)
 
-    // makeFrisk(0, 0, 0);
+    // assign these guys somehow
+    lilypad(-AREADIM, waterLevel, -AREADIM);
+    reeds(-AREADIM/2, waterLevel, -AREADIM);
 };
 
 // // procedural generation
@@ -211,5 +207,18 @@ function makeFlower(x, y, z, height, iterations) {
 //         -b, -b, -b,
 //     ];
 
+// }
+
+// // takes translation coords around center of object
+// function makeFrisk(x,y,z) {
+//     makeCylinder(x, y, z, 0.08,0.1, 12,1);
+//     makeCylinder(x, y-0.05, z, 0.05, 0.08, 12);
+//     makeCylinder(x, y-0.14, z, 0.08, 0.1, 12);
+//     makeCylinder(x + 0.1, y-0.14, z, 0.04, 0.1, 12);
+//     makeCylinder(x - 0.1, y-0.14, z, 0.04, 0.1, 12);
+//     makeCylinder(x - 0.025,y-0.24,z, 0.04, 0.25, 12);
+//     makeCylinder(x + 0.025, y-0.24, z, 0.04, 0.25, 12);
+//     makeRectPrism(x + 0.02,y-0.27, z-0.05, 0.04, 0.04, 0.05);
+//     makeRectPrism(x-0.04,y-0.27, z-0.05, 0.04, 0.04, 0.05);
 // }
 

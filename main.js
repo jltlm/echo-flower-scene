@@ -474,6 +474,8 @@ async function loadImageBitmap(url) {
 async function init() {
     // initiate object loader, load objects
     objModels.friskObj = objLoader.parse(await objLoader.load("./assets/obj/frisk.obj"));
+    objModels.lilypadObj = objLoader.parse(await objLoader.load("./assets/obj/lilypad.obj"));
+    objModels.reedsObj = objLoader.parse(await objLoader.load("./assets/obj/reeds.obj"));
 
     // get the textures
     const friskTextureUrl = './assets/friskTexture.png';
