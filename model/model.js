@@ -75,6 +75,13 @@ export function makeScene() {
 
     frisk(0, landLevel, 0);
     generateLand(-AREADIM, waterLevel, 0, LANDDIM/2, 15, 'x', 'right');
+    generateLand(-AREADIM + 0.15, waterLevel, 0, LANDDIM/2, 8, 'z', 'right');
+    generateLand(-AREADIM + 0.16, waterLevel, 8, LANDDIM/2, 8, 'z', 'left');
+    generateLand(-AREADIM + 0.17, waterLevel, 0, LANDDIM/2, 8, 'z', 'right');
+    generateLand(-AREADIM + 0.18, waterLevel, 8, LANDDIM/2, 8, 'z', 'left');
+    generateLand(-AREADIM + 0.19, waterLevel, 0, LANDDIM/2, 8, 'z', 'right');
+    generateLand(-AREADIM + 0.2, waterLevel, 8, LANDDIM/2, 8, 'z', 'left');
+
     // makeFlower(0,0,0,.3, 5)
 
     // assign these guys somehow
