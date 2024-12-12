@@ -1,4 +1,4 @@
-import { makeRectPrism, makeCylinder, addObj, makeGrass } from "./basic.js";
+import { makeRectPrism, makeCylinder, addObj, makeGrass, addTriangle } from "./basic.js";
 
 // models size constants
 const AREADIM = 0.2;
@@ -45,7 +45,7 @@ function makeLand(x, y, z, size) {
     // add a chance of a flower model to each land piece
     if ((Math.floor(x*51) + Math.floor(z*22)) % 7 == 0) {
         // flower model
-        generateEchoFlower(0, 0, 0, 0.01);
+        generateEchoFlower(x, y, z, 0.005);
 
     }
     if ((Math.floor(x*51) + Math.floor(z*22)) % 7 == 4) {
@@ -248,27 +248,26 @@ function dotGridGradient(ix, iy, x, y) {
     return dx * gradient[0] + dy * gradient[1];
 }
 
-// procedural generation
-// (getting there)
-/**
-*/
-
-
+// creates the echo flower for the map using l-system procedural generation
 function generateEchoFlower(x, y, z, itemHeight){
     let grammarMap = echoFlowerGrammar(2);
     for (let g = 0; g < grammarMap.length; g++){
         let key = grammarMap[g];
         switch(key){
             case 'a':
-                addStem(x, y * itemHeight, z, itemHeight);
+                addStem(x, y, z, itemHeight);
             case 'b':
-                addLeaf(x, y * itemHeight, z, itemHeight);
+                addLeaf(x, y, z, itemHeight);
         }
     }
+    addFlower(x, y + 0.005, z);
 }
 
 function echoFlowerGrammar(iterations){
-//     axiom: a
+// uses l-system to create the rules
+// for generating the flower:
+//
+// axiom: a
 // variables:
 // - a: line
 // - b: line ending in leaf
@@ -285,7 +284,6 @@ function echoFlowerGrammar(iterations){
     rules.set('a', 'ab');
     rules.set('b', 'a[b]a');
     let axiom = "a";
-    let angle = 45.0;
     let grammarMap = axiom.split('');
     let buffer = [];
     for (let i = 0; i < iterations; i++){
@@ -316,40 +314,6 @@ function echoFlowerGrammar(iterations){
     grammarMap.push("[", "c");
     return grammarMap;
 }
-//         let insert = rules.get(axiom.charAt(j).toString());
-//         if (buffer.length == 0){
-//             buffer = insert;
-//         }
-//         else{
-//            buffer = buffer.concat(insert);
-//         }
-//         console.log(buffer);
-//         // add the substitution into new string
-//         grammarMap += insert;
-//     }
-//     grammarMap += '[c';
-//     console.log(grammarMap);
-// }
-
-    // let rule = new Map();
-    // rule.set('a', 'ab');
-    // rule.set('b', 'a');
-
-    // let genString = "a";
-
-    // for (let i = 1; i < iterations; i++) {
-    //     let newString = "";
-    //     for (let j = 0; j < genString.length; j++) {
-    //         let insert = rule.get(genString.charAt(j).toString());
-    //         // add the substitution into new string
-    //         newString += insert;
-    //     }
-    //     // reassign genString to newString
-    //     genString = newString;
-    // }
-
-    // let itemHeight = height / genString.length;
-
 
     function addStem(x, startY, z, itemHeight) {
         // stem is 1/10th width to height
@@ -358,12 +322,49 @@ function echoFlowerGrammar(iterations){
 
     function addLeaf(x, startY, z, itemHeight) {
         addStem(startY);
-        makeRectPrism(x+itemHeight/10, startY, z, itemHeight, itemHeight/2, itemHeight);
+        makeRectPrism(x+itemHeight/10, startY+0.001, z, itemHeight * 0.4, itemHeight/2 * 0.4, itemHeight * 0.4);
     }
 
-    // function addFlower(startY) {
+    function addFlower(x, startY, z) {
+        // creating the pedals
+        let pi = Math.PI;
+        let radialdivision = 20;
+
+        for(let f = 0; f < radialdivision; f++){
+            let r = 0.003;
+            let a = ((2 * pi)/ radialdivision) * f;
+            let a2 = ((2 * pi)/ radialdivision) * (f + 1);
+    
+            let x1 = r * Math.cos(a);
+            let z1 = r * Math.sin(a);
+            let x2 = r * Math.cos(a2);
+            let z2 = r * Math.sin(a2);
+            
+
+            if (z >= 0){
+                // bottom side
+                addTriangle(x, startY, z,
+                    x1, startY + z1, z,
+                    x2, startY + z2, z
+                );
         
-    // }
+                addTriangle(x, startY, z,
+                    x2, startY + z2, z,
+                    x1, startY + z1, z,
+                );
 
-
+                // top side
+                addTriangle(x1, startY + z1, z-0.0005,
+                    x, startY, z-0.0005,
+                    x2, startY + z2, z-0.0005
+                );
+        
+                addTriangle(x2, startY + z2, z-0.0005,
+                    x, startY, z-0.0005,
+                    x1, startY + z1, z-0.0005
+                );
+            }
+        }
+    }
+    
 
