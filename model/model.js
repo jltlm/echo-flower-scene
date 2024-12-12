@@ -37,6 +37,7 @@ function makeBridge(x, y, z, size) {
     }
 }
 
+// creates the land/map of the area
 function makeLand(x, y, z, size) {
     makeRectPrism(x, y, z, size, size/5, size, textures.landTex);
 
@@ -58,10 +59,12 @@ function makeLand(x, y, z, size) {
 
 }
 
+// create Frisk
 function frisk(x, y, z) {
     addObj(objModels.friskObj, x, y, z, textures.friskTex, 0.04 * AREADIM)
 }
 
+// create the water part + lilypad and reeds of the area
 function makeWater(x, y, z, size) {
     // attempting something 'close to random' here in the if statement
     // 'close enough'
@@ -73,10 +76,12 @@ function makeWater(x, y, z, size) {
     }
 }
 
+// create the lilypads
 function lilypad(x, y, z) {
     addObj(objModels.lilypadObj, x, y, z, textures.landTex, 0.04 * AREADIM)
 }
 
+// create the reeds
 function reeds(x, y, z) {
     addObj(objModels.reedsObj, x, y, z, textures.woodTex, 0.05 * AREADIM)
 }
@@ -124,6 +129,7 @@ export function makeScene() {
     frisk(0, landLevel, -0.05);
 };
 
+// makes the map
 function makeMap(xpos, zpos, xbound, ybound, waterLevel) {
     let inmap = generateGroundMap(xbound, ybound);
 
@@ -210,6 +216,7 @@ function perlin(x, y) {
 
 }
 
+// randomizes the gradient vector
 function randomGradient(ix, iy) {
     // "random". random from https://stackoverflow.com/a/35377265
 
@@ -263,7 +270,6 @@ function generateEchoFlower(x, y, z, itemHeight){
     addFlower(x, y + 0.005, z);
 }
 
-function echoFlowerGrammar(iterations){
 // uses l-system to create the rules
 // for generating the flower:
 //
@@ -279,7 +285,7 @@ function echoFlowerGrammar(iterations){
 // a -> ab
 // b -> a[b]
 // c -> [c
-
+function echoFlowerGrammar(iterations){
     let rules = new Map();
     rules.set('a', 'ab');
     rules.set('b', 'a[b]a');
