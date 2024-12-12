@@ -15,16 +15,14 @@ let uniformBuffer = null;
 
 // Other globals with default values;
 var updateDisplay = true;
-var anglesReset = [-10.0, 30.0, 0.0, 0.0];
-var angles = [-10.0, 30.0, 0.0, 0.0];
-// var anglesReset = [0, 0, 0, 0];
-// var angles = [0, 0, 0, 0];
+var anglesReset = [0.0, 30.0, 0.0, 0.0];
+var angles = [0.0, 30.0, 0.0, 0.0];
 var angleInc = 5.0;
-var zoomLevel = 5;
+var zoomLevel = 10;
 var zoomInc = .1;
-var zoomReset = 5;
-var translateReset = [0, 0.1, 0.5, 0];
-var translate = [0, 0.1, 0.5, 0];
+var zoomReset = 10;
+var translateReset = [0, 0.1, 0.6, 0];
+var translate = [0, 0.1, 0.6, 0];
 var translateInc = 0.02;
 
 objModels = {};
@@ -429,7 +427,7 @@ function draw() {
     // a color attachment ia like a buffer to hold color info
     colorAttachment = {
         view: colorTextureView,
-        clearValue: { r: 0.3, g: 0.1, b: 0.3, a: 1 },
+        clearValue: { r: 0.1, g: 0.25, b: 0.4, a: 1 },
         loadOp: 'clear',
         storeOp: 'store'
     };
@@ -532,6 +530,12 @@ async function init() {
             translate[0] = translateReset[0];
             translate[1] = translateReset[1];
             translate[2] = translateReset[2];
+        }
+
+        else if (key == 'T') { // capital only to prevent accidental clicks, lol
+            zoomLevel = 3;
+            angles = [-90.0, 0.0, 0.0, 0.0];
+            translate = [0, 0, 0.6, 0];
         }
 
         // create a new shape and do a redo a draw

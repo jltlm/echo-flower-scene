@@ -8,6 +8,17 @@
  */
 import * as mat4 from '../util/mat42.js';
 
+// grass is entirely a basic
+// yes
+export function makeGrass(x, y, z, h, t) {
+    let w = h/3;
+    addTriangle(x, y, z,
+        x+w/2, y+h, z,
+        x+w, y, z, t);
+    addTriangle(x+w, y, z,
+        x+w/2, y+h, z,
+        x, y, z, t);
+    }
 
 /**
  * Translates rect prism to (x, y, z)- has dimensions

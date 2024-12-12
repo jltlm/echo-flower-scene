@@ -1,9 +1,7 @@
-import { makeRectPrism, makeCylinder, addObj } from "./basic.js";
+import { makeRectPrism, makeCylinder, addObj, makeGrass } from "./basic.js";
 
 // models size constants
-const AREADIM = 1/10;
-const LANDDIM = 0.5/10;
-const FRISKFACEDIM = 0.2;
+const AREADIM = 0.2;
 
 // ===========================================
 // textures / colors!!!
@@ -11,9 +9,16 @@ let textures = {
     waterTex: 1,
     friskTex: 2,
     woodTex: 3,
-    landTex: 4
+    landTex: 4,
+    flowerTex: 5,
+    grassTex: 6,
 }
 // ===========================================
+
+// makes the water part of the scene
+function makeWaterBase(x, y, z, waterDepth) {
+    makeRectPrism(x, y, z, 2*AREADIM, waterDepth, 2*AREADIM, textures.waterTex);
+}
 
 // translates bridge item to x, y, z. In a square of side length size
 function makeBridge(x, y, z, size) {
@@ -34,130 +39,215 @@ function makeBridge(x, y, z, size) {
 
 function makeLand(x, y, z, size) {
     makeRectPrism(x, y, z, size, size/5, size, textures.landTex);
-}
 
-// makes the water part of the scene
-function makeWater(x, y, z, waterDepth) {
-    makeRectPrism(x, y, z, 2*AREADIM, waterDepth, 2*AREADIM, textures.waterTex);
+    y = y+size/5;
+
+    // add a chance of a flower model to each land piece
+    if ((Math.floor(x*51) + Math.floor(z*22)) % 7 == 0) {
+        // flower model
+        
+
+    }
+    if ((Math.floor(x*51) + Math.floor(z*22)) % 7 == 4) {
+        makeGrass(x, y-size/10, z, size/5, textures.grassTex);
+        makeGrass(x+size/3, y-size/10, z+2*size/3, size/5, textures.grassTex);
+    } else {
+        makeGrass(x+4*size/5, y-size/10, z+size/4, size/5, textures.grassTex);
+        makeGrass(x+2*size/3, y-size/10, z+size/2, size/5, textures.grassTex);
+    }
+
 }
 
 function frisk(x, y, z) {
-    addObj(objModels.friskObj, x, y, z, textures.friskTex, 0.008)
+    addObj(objModels.friskObj, x, y, z, textures.friskTex, 0.04 * AREADIM)
+}
+
+function makeWater(x, y, z, size) {
+    // attempting something 'close to random' here in the if statement
+    // 'close enough'
+    if (Math.floor((x + z)*24) % 5 == 0) {
+        lilypad(x+size/2, y, z+size/4);
+    } else if (Math.floor((x + z)*24) % 3 == 1) {
+        lilypad(x+size/3, y, z+size/4);
+        reeds(x+2*size/3, y, z+3*size/4);
+    }
 }
 
 function lilypad(x, y, z) {
-    addObj(objModels.lilypadObj, x, y, z, textures.landTex, 0.008)
+    addObj(objModels.lilypadObj, x, y, z, textures.landTex, 0.04 * AREADIM)
 }
 
 function reeds(x, y, z) {
-    addObj(objModels.reedsObj, x, y, z, textures.woodTex, 0.01)
+    addObj(objModels.reedsObj, x, y, z, textures.woodTex, 0.05 * AREADIM)
 }
 
 // MAKES THE SCENE
 // scene is a 4x4 place. a bridge is 1, a land is 1
 // 
 export function makeScene() {
-    const bottom = -AREADIM;
+    const bottom = -AREADIM/2;
     const waterDepth = AREADIM/4;
     const waterLevel = bottom + waterDepth;
-    const landLevel = waterLevel+AREADIM/10;
+    const landNum = 12;
+    const landSize = 2 * AREADIM / landNum;
+    const landLevel = waterLevel+landSize/5;
 
-    makeWater(-AREADIM, bottom, -AREADIM, waterDepth);
-    // makeLand(-AREADIM, waterLevel, 0, LANDDIM/2);
-    // makeBridge(-AREADIM/2, waterLevel, AREADIM/2, AREADIM/2);
-    // makeLand(-LANDDIM, waterLevel, 0, LANDDIM/2)
-    // makeLand(-LANDDIM/2, waterLevel, 0, LANDDIM/2)
-    // makeLand(-LANDDIM/2, waterLevel,  -LANDDIM/2, LANDDIM/2)
-    // makeLand(0, waterLevel, 0, LANDDIM/2)
-    // makeLand(0, waterLevel, -LANDDIM/2, LANDDIM/2)
-    // makeLand(LANDDIM/2, waterLevel, -LANDDIM/2, LANDDIM/2)
-    // makeBridge(0, waterLevel, -AREADIM, AREADIM/2);
-
-    frisk(0, landLevel, 0);
-    generateLand(-AREADIM, waterLevel, 0, LANDDIM/2, 15, 'x', 'right');
-    generateLand(-AREADIM + 0.15, waterLevel, 0, LANDDIM/2, 8, 'z', 'right');
-    generateLand(-AREADIM + 0.16, waterLevel, 8, LANDDIM/2, 8, 'z', 'left');
-    generateLand(-AREADIM + 0.17, waterLevel, 0, LANDDIM/2, 8, 'z', 'right');
-    generateLand(-AREADIM + 0.18, waterLevel, 8, LANDDIM/2, 8, 'z', 'left');
-    generateLand(-AREADIM + 0.19, waterLevel, 0, LANDDIM/2, 8, 'z', 'right');
-    generateLand(-AREADIM + 0.2, waterLevel, 8, LANDDIM/2, 8, 'z', 'left');
-    generateLand(-AREADIM + 0.15, waterLevel, 0, LANDDIM/2, 11, 'z', 'left');
-    generateLand(-AREADIM + 0.15, waterLevel, -0.11, LANDDIM/2, 5, 'x', 'right');
-    generateLand(-AREADIM + 0.2, waterLevel, -0.11, LANDDIM/2, 2, 'z', 'right');
-    generateLand(-AREADIM + 0.2, waterLevel, -0.09, LANDDIM/2, 2, 'x', 'right');
-    generateLand(-AREADIM + 0.2, waterLevel, -0.09, LANDDIM/2, 3, 'x', 'right');
-    // makeFlower(0,0,0,.3, 5)
-
-    // assign these guys somehow
-    // lilypad(-AREADIM, waterLevel, -AREADIM);
-    // reeds(-AREADIM/2, waterLevel, -AREADIM);
-
-   console.log(generateEchoFlower());
-};
-
-// // procedural generation
-// // takes in a [x, y] of a place to start generating land
-// // returns a nested array of land vs bridge vs empty (open water) spots
-// // as L, B, and X
-
-
-
-// let 0 - land
-// let 1 - water
-// let [ - turn left
-// let ] - turn right
-
-
-
-function generateLand(x, y, z, size, freq, side, dir){
-    if(side == 'x'){
-        if(dir == 'right'){
-            for(let l = 0; l < freq; l++){
-                makeLand(x + l*0.01, y, z, size);
-            }
-        }
-        if(dir == 'left'){
-            for(let l = 0; l < freq; l++){
-                makeLand(x - l*0.01, y, z, size);
-            }
-        }
-    }
-    if(side == 'z'){
-        for(let l = 0; l < freq; l++){
-            makeLand(x, y, z + l*0.01, size);
-        }
-        if(dir == 'left'){
-            for(let l = 0; l < freq; l++){
-                makeLand(x, y, z - l*0.01, size);
-            }
-        }
-    }
-}
-// function generateGroundMap(axiom) {
-//     // bounds are a 4x4
-//     let ax = axiom[0];
-//     let ay = axiom[1];
-//     let land = "L";
-//     let bridge = "B";
-//     let empty = "X";
-
-//     let map = new Map();
-//     let checked = new Set();
-
-//     map.set(axiom, land);
-//     checked.add(axiom);
-//     while (map.length < 16) {
-
-//     }
+    makeWaterBase(-AREADIM, bottom, -AREADIM, waterDepth);
+    makeMap(-AREADIM, -AREADIM, landNum, landNum, waterLevel);
+    // hardcoded bridge making :')
+    // this could've been generated, but I ran out of time
+    // conforms to the generated landmap. please don't change land map ;')
+    makeBridge(-AREADIM + landSize * 10, waterLevel,
+        -AREADIM + landSize * 2, landSize);
+    makeBridge(-AREADIM + landSize * 9, waterLevel,
+        -AREADIM + landSize * 2, landSize);
+    makeBridge(-AREADIM + landSize * 4, waterLevel,
+        -AREADIM + landSize * 6, landSize);
+    makeBridge(-AREADIM + landSize * 2, waterLevel,
+        -AREADIM + landSize * 10, landSize);
+    makeBridge(-AREADIM + landSize * 2, waterLevel,
+        -AREADIM + landSize * 9, landSize);
+    makeBridge(-AREADIM + landSize * 9, waterLevel,
+        -AREADIM + landSize * 7, landSize);
+    makeBridge(-AREADIM + landSize * 8, waterLevel,
+        -AREADIM + landSize * 7, landSize);
+    makeBridge(-AREADIM + landSize * 7, waterLevel,
+        -AREADIM + landSize * 4, landSize);
     
 
-//     for (let x = 0; x < 4; x++) {
-//         for (let y = 0; y < 4; y++) {
 
-//         }
-//     }
+    // NOTE!!!! THERE IS SOMETHING WRONG WITH THIS FRISK MODEL!!!
+    // something is wrong with its topology, i think.
+    // it's screwing up the subsequent points. Just try moving the below
+    // frisk line to the top.
+    // anyway. KEEP FRISK TO BE RENDERED LAST!!!!
+    // (don't edit below this line except to change frisk's position!!!)
+    frisk(0, landLevel, -0.05);
+};
 
-// }
+function makeMap(xpos, zpos, xbound, ybound, waterLevel) {
+    let inmap = generateGroundMap(xbound, ybound);
+
+    // fill new map to have 'L'(land) or 'W' (water) or 'B' (bridge)
+    let map = new Array(xbound).fill(0).map(() => new Array(ybound).fill(0));
+    for (let x=0; x < xbound; x++) {
+        for (let y=0; y < ybound; y++) {
+            map[x][y] = inmap[x][y] < 0 ? 'L' : 'W';
+
+            // let's fill the map!!
+            if (map[x][y] == 'L') {
+                makeLand(xpos + x * (AREADIM*2/xbound), waterLevel,
+                zpos + y * (2*AREADIM/ybound), 2*AREADIM/xbound);
+            } else {
+                makeWater(xpos + x * (AREADIM*2/xbound), waterLevel,
+                zpos + y * (2*AREADIM/ybound), 2*AREADIM/xbound);
+            }
+        }
+    }
+    return map;
+}
+
+// uses procedural generation - uses perlin noise
+function generateGroundMap(xbound, ybound) {
+    let map = new Array(xbound).fill(0).map(() => new Array(ybound).fill(0));
+    let gridsize = 12;
+    // bounds are a 6x6
+    for (let x=0; x < xbound; x++) {
+        for (let y=0; y < ybound; y++) {
+
+            let val = 0;
+            let freq = 1;
+            let amp = 1;
+            let oct = 1;
+
+            // per octave
+            for (let i = 0; i < oct; i++) {
+                val += perlin(x * freq/gridsize, y * freq/gridsize) * amp;
+                freq *= 2;
+                amp /= 2;
+            }
+            val = val / oct;
+
+            // // clip to 0 to 1
+            // if (val > 1) val = 1;
+            // else if (val < -1) val = -1;
+
+            // add to our map
+            map[x][y] = val;
+        }
+    }
+
+    return map;
+
+}
+
+// let's hear some (perlin) noiiiiiise!!!!!
+// procedural generation
+// perlin help from https://www.youtube.com/watch?v=kCIaHqb60Cw
+function perlin(x, y) {
+    let x0 = Math.floor(x);
+    let y0 = Math.floor(y);
+    let x1 = x + 1;
+    let y1 = y + 1;
+
+    // compute interpolation weights
+    let sx = x-x0;
+    let sy = y-y0;
+
+    // compute and interpolate top 2 corners
+    let n0 = dotGridGradient(x0, y0, x, y);
+    let n1 = dotGridGradient(x1, y0, x, y);
+    let ix0 = interpolate(n0, n1, sx);
+
+    // compute and interpolate bottom 2
+    n0 = dotGridGradient(x0, y1, x, y);
+    n1 = dotGridGradient(x1, y1, x, y);
+    let ix1 = interpolate(n0, n1, sx);
+
+    // compute between the top 2 and bottom 2 (in y)
+    let value = interpolate(ix0, ix1, sy);
+
+    return value;
+
+}
+
+function randomGradient(ix, iy) {
+    // "random". random from https://stackoverflow.com/a/35377265
+
+    ix = ix * 3266489917 + 374761393;
+    ix = (ix << 17) | (ix >> 15);
+  
+    /* mix around the bits in y and mix those into x: */
+    ix += iy * 3266489917;
+  
+    /* Give x a good stir: */
+    ix *= 668265263;
+    ix ^= ix >> 15;
+    ix *= 2246822519;
+    ix ^= ix >> 13;
+    ix *= 3266489917;
+    ix ^= ix >> 16;
+  
+    /* trim the result and scale it to a float in [0,1): */
+    let random = (ix & 0x00ffffff) ;
+  
+    let out = [Math.sin(random), Math.cos(random)];
+    return out;
+}
+
+function interpolate(a0, a1, w) {
+    return (a1-a0) * (3-w*2) * w * w + a0;
+}
+
+// finds dot product between distance vector and gradient vectors
+function dotGridGradient(ix, iy, x, y) {
+    let gradient = randomGradient(ix, iy);
+
+    let dx = x - ix;
+    let dy = y - iy;
+
+    return dx * gradient[0] + dy * gradient[1];
+}
 
 // procedural generation
 // (getting there)
@@ -276,64 +366,15 @@ function echoFlowerGrammar(iterations){
         
     // }
 
-    // for (let i = 0; i < genString.length; i++) {
-    //     let ch = genString.charAt(i);
-    //     if (ch == 'a') {
-    //         addStem(i * itemHeight);
-    //     } else if (ch == 'b') {
-    //         addLeaf(i * itemHeight);
-    //     }
+    for (let i = 0; i < genString.length; i++) {
+        let ch = genString.charAt(i);
+        if (ch == 'a') {
+            addStem(i * itemHeight);
+        } else if (ch == 'b') {
+            addLeaf(i * itemHeight);
+        }
+    }
 
+}
 
-
-// // sets up the bounds for the area. A cube of lines, would require point line list thing
-// // UNUSED
-// function makeArea() {
-//     const b = AREADIM;
-//     const cube = [
-//         -b, -b, -b,
-//         -b, b, -b,
-
-//         -b, b, -b,
-//         -b, b, b,
-
-//         -b, b, b,
-//         -b, -b, b,
-
-//         b, -b, -b,
-//         b, b, -b,
-
-//         b, b, -b,
-//         b, b, b,
-
-//         b, b, b,
-//         b, -b, b,
-
-//         b, -b, b,
-//         -b, -b, b,
-
-//         b, b, b,
-//         -b, b, b,
-
-//         b, b, -b,
-//         -b, b, -b,
-
-//         b, -b, -b,
-//         -b, -b, -b,
-//     ];
-
-// }
-
-// // takes translation coords around center of object
-// function makeFrisk(x,y,z) {
-//     makeCylinder(x, y, z, 0.08,0.1, 12,1);
-//     makeCylinder(x, y-0.05, z, 0.05, 0.08, 12);
-//     makeCylinder(x, y-0.14, z, 0.08, 0.1, 12);
-//     makeCylinder(x + 0.1, y-0.14, z, 0.04, 0.1, 12);
-//     makeCylinder(x - 0.1, y-0.14, z, 0.04, 0.1, 12);
-//     makeCylinder(x - 0.025,y-0.24,z, 0.04, 0.25, 12);
-//     makeCylinder(x + 0.025, y-0.24, z, 0.04, 0.25, 12);
-//     makeRectPrism(x + 0.02,y-0.27, z-0.05, 0.04, 0.04, 0.05);
-//     makeRectPrism(x-0.04,y-0.27, z-0.05, 0.04, 0.04, 0.05);
-// }
 
