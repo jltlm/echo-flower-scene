@@ -366,15 +366,14 @@ function echoFlowerGrammar(iterations){
         
     // }
 
-    for (let i = 0; i < genString.length; i++) {
-        let ch = genString.charAt(i);
-        if (ch == 'a') {
-            addStem(i * itemHeight);
-        } else if (ch == 'b') {
-            addLeaf(i * itemHeight);
-        }
-    }
+    // for (let i = 0; i < genString.length; i++) {
+    //     let ch = genString.charAt(i);
+    //     if (ch == 'a') {
+    //         addStem(i * itemHeight);
+    //     } else if (ch == 'b') {
+    //         addLeaf(i * itemHeight);
+    //     }
+    // }
 
-}
 
 
