@@ -1,4 +1,4 @@
-import { makeRectPrism, makeCylinder, addObj } from "./basic.js";
+import { makeRectPrism, makeCylinder, addObj, makeGrass } from "./basic.js";
 
 // models size constants
 const AREADIM = 0.2;
@@ -9,7 +9,9 @@ let textures = {
     waterTex: 1,
     friskTex: 2,
     woodTex: 3,
-    landTex: 4
+    landTex: 4,
+    flowerTex: 5,
+    grassTex: 6,
 }
 // ===========================================
 
@@ -43,7 +45,15 @@ function makeLand(x, y, z, size) {
     // add a chance of a flower model to each land piece
     if ((Math.floor(x*51) + Math.floor(z*22)) % 7 == 0) {
         // flower model
+        
 
+    }
+    if ((Math.floor(x*51) + Math.floor(z*22)) % 7 == 4) {
+        makeGrass(x, y-size/10, z, size/5, textures.grassTex);
+        makeGrass(x+size/3, y-size/10, z+2*size/3, size/5, textures.grassTex);
+    } else {
+        makeGrass(x+4*size/5, y-size/10, z+size/4, size/5, textures.grassTex);
+        makeGrass(x+2*size/3, y-size/10, z+size/2, size/5, textures.grassTex);
     }
 
 }

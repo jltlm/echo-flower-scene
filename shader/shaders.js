@@ -78,10 +78,15 @@ function getShader() {
         var water = textureSample(WaterTexture, TexSampler, in.uv);
         var wood = textureSample(WoodTexture, TexSampler, in.uv);
         var frisk = textureSample(FriskTexture, TexSampler, in.uv);
-        var land = vec4(0.11, 0.18, 0.11, 1.0);;
-        var flower = vec4 (1.0, 0.0, 0.0, 1.0);;
+        var land = vec4(0.11, 0.18, 0.11, 1.0);
+        var flower = vec4 (1.0, 0.0, 0.0, 1.0);
+        var grass = vec4(0.18, 0.28, 0.21, 1.0);
 
-        if (in.tex > 3) {
+        if (in.tex > 5) {
+            fragColor = grass;
+        } else if (in.tex > 4) {
+            fragColor = flower;
+        } else if (in.tex > 3) {
             fragColor = land;
         } else if (in.tex > 2) {
             fragColor = wood;
@@ -93,6 +98,9 @@ function getShader() {
 
         // bary
         if (in.bary.x < 0.01 || in.bary.y < 0.01 || in.bary.z < 0.01) {
+            if (in.tex > 5) {
+                fragColor = vec4(0.0, 0.7, 0.7, 1.0);
+            }
             // fragColor = vec4 (1.0, 0.0, 0.0, 1.0);
 
             // fragColor = vec4 (0.05, 0.28, 0.42, 1.0);
