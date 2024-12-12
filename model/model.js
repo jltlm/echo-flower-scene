@@ -45,7 +45,7 @@ function makeLand(x, y, z, size) {
     // add a chance of a flower model to each land piece
     if ((Math.floor(x*51) + Math.floor(z*22)) % 7 == 0) {
         // flower model
-        
+        generateEchoFlower(0, 0, 0, 0.01);
 
     }
     if ((Math.floor(x*51) + Math.floor(z*22)) % 7 == 4) {
@@ -113,7 +113,6 @@ export function makeScene() {
         -AREADIM + landSize * 7, landSize);
     makeBridge(-AREADIM + landSize * 7, waterLevel,
         -AREADIM + landSize * 4, landSize);
-    
 
 
     // NOTE!!!! THERE IS SOMETHING WRONG WITH THIS FRISK MODEL!!!
@@ -255,15 +254,15 @@ function dotGridGradient(ix, iy, x, y) {
 */
 
 
-function generateEchoFlower(){
+function generateEchoFlower(x, y, z, itemHeight){
     let grammarMap = echoFlowerGrammar(2);
     for (let g = 0; g < grammarMap.length; g++){
         let key = grammarMap[g];
         switch(key){
             case 'a':
-                addStem(0);
+                addStem(x, y * itemHeight, z, itemHeight);
             case 'b':
-                addLeaf(0);
+                addLeaf(x, y * itemHeight, z, itemHeight);
         }
     }
 }
@@ -352,27 +351,18 @@ function echoFlowerGrammar(iterations){
     // let itemHeight = height / genString.length;
 
 
-    function addStem(startY) {
+    function addStem(x, startY, z, itemHeight) {
         // stem is 1/10th width to height
         makeCylinder(x, startY, z, itemHeight/10, itemHeight);
     }
 
-    function addLeaf(startY) {
+    function addLeaf(x, startY, z, itemHeight) {
         addStem(startY);
         makeRectPrism(x+itemHeight/10, startY, z, itemHeight, itemHeight/2, itemHeight);
     }
 
     // function addFlower(startY) {
         
-    // }
-
-    // for (let i = 0; i < genString.length; i++) {
-    //     let ch = genString.charAt(i);
-    //     if (ch == 'a') {
-    //         addStem(i * itemHeight);
-    //     } else if (ch == 'b') {
-    //         addLeaf(i * itemHeight);
-    //     }
     // }
 
 
