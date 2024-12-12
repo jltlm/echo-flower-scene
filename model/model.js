@@ -89,8 +89,10 @@ export function makeScene() {
     // makeFlower(0,0,0,.3, 5)
 
     // assign these guys somehow
-    lilypad(-AREADIM, waterLevel, -AREADIM);
-    reeds(-AREADIM/2, waterLevel, -AREADIM);
+    // lilypad(-AREADIM, waterLevel, -AREADIM);
+    // reeds(-AREADIM/2, waterLevel, -AREADIM);
+
+   console.log(generateEchoFlower());
 };
 
 // // procedural generation
@@ -160,63 +162,128 @@ function generateLand(x, y, z, size, freq, side, dir){
 // procedural generation
 // (getting there)
 /**
+*/
 
-axiom: a
-variables:
-- a: line
-- b: line ending in leaf
-- c: line ending in flower
-constants:
-- [ push the position and angle state and turn left 45 degrees
-- ] push the position and angle state and turn right 45 degrees
-rules:
-a -> aa
-b -> a[b]
-c -> [c
- */
-function makeFlower(x, y, z, height, iterations) {
-    let rule = new Map();
-    rule.set('a', 'ab');
-    rule.set('b', 'a');
 
-    let genString = "a";
-
-    for (let i = 1; i < iterations; i++) {
-        let newString = "";
-        for (let j = 0; j < genString.length; j++) {
-            let insert = rule.get(genString.charAt(j).toString());
-            // add the substitution into new string
-            newString += insert;
+function generateEchoFlower(){
+    let grammarMap = echoFlowerGrammar(2);
+    for (let g = 0; g < grammarMap.length; g++){
+        let key = grammarMap[g];
+        switch(key){
+            case 'a':
+                addStem(0);
+            case 'b':
+                addLeaf(0);
         }
-        // reassign genString to newString
-        genString = newString;
     }
+}
 
-    let itemHeight = height / genString.length;
+function echoFlowerGrammar(iterations){
+//     axiom: a
+// variables:
+// - a: line
+// - b: line ending in leaf
+// - c: line ending in flower
+// constants:
+// - [ push the position and angle state and turn left 45 degrees
+// - ] push the position and angle state and turn right 45 degrees
+// rules:
+// a -> ab
+// b -> a[b]
+// c -> [c
+
+    let rules = new Map();
+    rules.set('a', 'ab');
+    rules.set('b', 'a[b]a');
+    let axiom = "a";
+    let angle = 45.0;
+    let grammarMap = axiom.split('');
+    let buffer = [];
+    for (let i = 0; i < iterations; i++){
+        for (let j = 0; j < grammarMap.length; j++){
+            if(grammarMap[j] == 'a' || grammarMap[j] == 'b'){
+                let rule = rules.get(grammarMap[j]).toString();
+                if (buffer.length == 0){
+                    buffer = rule;
+                }
+                else{
+                    buffer = buffer.concat(rule);
+                }
+            } 
+            else{
+                if(buffer.length == 0){
+                    buffer = grammarMap[j];
+                }
+                else{
+                    buffer = buffer.concat(grammarMap[j]);
+                }
+            }
+        }
+        grammarMap = [];
+        let b = buffer.toString().split('');
+        grammarMap = b;
+        buffer = [];
+    }
+    grammarMap.push("[", "c");
+    return grammarMap;
+}
+//         let insert = rules.get(axiom.charAt(j).toString());
+//         if (buffer.length == 0){
+//             buffer = insert;
+//         }
+//         else{
+//            buffer = buffer.concat(insert);
+//         }
+//         console.log(buffer);
+//         // add the substitution into new string
+//         grammarMap += insert;
+//     }
+//     grammarMap += '[c';
+//     console.log(grammarMap);
+// }
+
+    // let rule = new Map();
+    // rule.set('a', 'ab');
+    // rule.set('b', 'a');
+
+    // let genString = "a";
+
+    // for (let i = 1; i < iterations; i++) {
+    //     let newString = "";
+    //     for (let j = 0; j < genString.length; j++) {
+    //         let insert = rule.get(genString.charAt(j).toString());
+    //         // add the substitution into new string
+    //         newString += insert;
+    //     }
+    //     // reassign genString to newString
+    //     genString = newString;
+    // }
+
+    // let itemHeight = height / genString.length;
 
 
     function addStem(startY) {
         // stem is 1/10th width to height
         makeCylinder(x, startY, z, itemHeight/10, itemHeight);
     }
+
     function addLeaf(startY) {
         addStem(startY);
         makeRectPrism(x+itemHeight/10, startY, z, itemHeight, itemHeight/2, itemHeight);
     }
-    function addFlower(startY) {
+
+    // function addFlower(startY) {
         
-    }
+    // }
 
-    for (let i = 0; i < genString.length; i++) {
-        let ch = genString.charAt(i);
-        if (ch == 'a') {
-            addStem(i * itemHeight);
-        } else if (ch == 'b') {
-            addLeaf(i * itemHeight);
-        }
-    }
+    // for (let i = 0; i < genString.length; i++) {
+    //     let ch = genString.charAt(i);
+    //     if (ch == 'a') {
+    //         addStem(i * itemHeight);
+    //     } else if (ch == 'b') {
+    //         addLeaf(i * itemHeight);
+    //     }
 
-}
 
 
 // // sets up the bounds for the area. A cube of lines, would require point line list thing
